@@ -7,14 +7,14 @@
 
 @push('page-header')
 <div class="col-sm-7 col-auto">
-	<h3 class="page-title">Categories</h3>
+	<h3 class="page-title">Categorias</h3>
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-		<li class="breadcrumb-item active">Categories</li>
+		<li class="breadcrumb-item active">Categorias</li>
 	</ul>
 </div>
 <div class="col-sm-5 col">
-	<a href="#add_categories" data-toggle="modal" class="btn btn-primary float-right mt-2">Add Category</a>
+	<a href="#add_categories" data-toggle="modal" class="btn btn-primary float-right mt-2">Adicionar</a>
 </div>
 
 @endpush
@@ -29,9 +29,9 @@
 					<table id="category-table" class="datatable table table-striped table-bordered table-hover table-center mb-0">
 						<thead>
 							<tr style="boder:1px solid black;">
-								<th>Name</th>
-								<th>Created date</th>
-								<th class="text-center action-btn">Actions</th>
+								<th>Nome</th>
+								<th>Data de criação</th>
+								<th class="text-center action-btn">Ações</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -43,16 +43,16 @@
 									</h2>
 								</td>
 								
-								<td>{{date_format(date_create($category->created_at),"d M,Y")}}</td>
+								<td>{{date_format($category->created_at, 'd/m/Y')}}</td>
 
 								<td class="text-center">
 									<div class="actions">
 										<a data-id="{{$category->id}}" data-name="{{$category->name}}" class="btn btn-sm bg-success-light editbtn " data-toggle="modal" href="javascript:void(0)">
-											<i class="fe fe-pencil"></i> Edit
+											<i class="fe fe-pencil"></i> Editar
 										</a>
-										<a data-id="{{$category->id}}" data-toggle="modal" href="javascript:void(0)" class="btn btn-sm bg-danger-light deletebtn">
-											<i class="fe fe-trash"></i> Delete
-										</a>
+										{{-- <a data-id="{{$category->id}}" data-toggle="modal" href="javascript:void(0)" class="btn btn-sm bg-danger-light deletebtn">
+											<i class="fe fe-trash"></i> Deletar
+										</a> --}}
 									</div>
 								</td>
 							</tr>
@@ -70,7 +70,7 @@
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Add Category</h5>
+				<h5 class="modal-title">Adicionar</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -81,12 +81,12 @@
 					<div class="row form-row">
 						<div class="col-12">
 							<div class="form-group">
-								<label>Category</label>
+								<label>Categoria</label>
 								<input type="text" name="name" class="form-control">
 							</div>
 						</div>
 					</div>
-					<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+					<button type="submit" class="btn btn-primary btn-block">Salvar</button>
 				</form>
 			</div>
 		</div>
@@ -99,7 +99,7 @@
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Edit Category</h5>
+				<h5 class="modal-title">Editar Categoria</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -112,13 +112,13 @@
 						<div class="col-12">
 							<input type="hidden" name="id" id="edit_id">
 							<div class="form-group">
-								<label>Category</label>
+								<label>Categoria</label>
 								<input type="text" class="form-control edit_name" name="name">
 							</div>
 						</div>
 						
 					</div>
-					<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+					<button type="submit" class="btn btn-primary btn-block">Salvar</button>
 				</form>
 			</div>
 		</div>

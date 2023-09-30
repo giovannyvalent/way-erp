@@ -30,7 +30,7 @@ return [
                     'class' => 'form-control',
                     'style' => '', // any inline styles
                     'rules' => 'required|max:10', // validation rules for this input
-                    'value' => '$', // any default value
+                    'value' => 'R$', // any default value
                     'hint' => 'Use your currency symbol like $',
                 ],
                 [

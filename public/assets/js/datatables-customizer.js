@@ -6,7 +6,7 @@ $(document).ready(function (){
 		buttons: [
 			{
             extend: 'collection',
-            text: 'Export Data',
+            text: 'Exportar dados',
             buttons: [
 				{
                     extend: 'pdf',

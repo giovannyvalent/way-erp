@@ -7,14 +7,14 @@
 
 @push('page-header')
 <div class="col-sm-7 col-auto">
-	<h3 class="page-title">Products</h3>
+	<h3 class="page-title">Produtos</h3>
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-		<li class="breadcrumb-item active">Products</li>
+		<li class="breadcrumb-item active">Produtos</li>
 	</ul>
 </div>
 <div class="col-sm-5 col">
-	<a href="{{route('add-product')}}" class="btn btn-primary float-right mt-2">Add New</a>
+	<a href="{{route('add-product')}}" class="btn btn-primary float-right mt-2">Adicionar</a>
 </div>
 @endpush
 
@@ -29,13 +29,13 @@
 					<table id="datatable-export" class="table table-hover table-center mb-0">
 						<thead>
 							<tr>
-								<th>Product Name</th>
-								<th>Category</th>
-								<th>Price</th>
-								<th>Quantity</th>
-								<th>Discount</th>
-								<th>Expiry Date</th>
-								<th class="action-btn">Action</th>
+								<th>Produto</th>
+								<th>Categoria</th>
+								<th>Preço</th>
+								<th>Quantidade</th>
+								<th>Desconto</th>
+								{{-- <th>Data de exp</th> --}}
+								<th class="action-btn">Ações</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -58,17 +58,18 @@
 									</td>
 									<td>{{$product->purchase->quantity}}</td>
 									<td>{{$product->discount}}%</td>
-									<td>
+									{{-- <td>
 									{{date_format(date_create($product->purchase->expiry_date),"d M, Y")}}</span>										
-									</td>
+									</td> --}}
 									<td>
 										<div class="actions">
 											<a class="btn btn-sm bg-success-light" href="{{route('edit-product',$product)}}">
 												<i class="fe fe-pencil"></i> Edit
 											</a>
-											<a data-id="{{$product->id}}" href="javascript:void(0);" class="btn btn-sm bg-danger-light deletebtn" data-toggle="modal">
+											<button disabled data-id="{{$product->id}}" href="javascript:void(0);" class="btn btn-sm bg-danger-light deletebtn" data-toggle="modal">
+											{{-- <a data-id="{{$product->id}}" href="javascript:void(0);" class="btn btn-sm bg-danger-light deletebtn" data-toggle="modal"> --}}
 												<i class="fe fe-trash"></i> Delete
-											</a>
+											</button>
 										</div>
 									</td>
 								</tr>

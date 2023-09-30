@@ -34,7 +34,7 @@ class CategoryController extends Controller
         ]);
         Category::create($request->all());
         $notification=array(
-            'message'=>"Category has been added",
+            'message'=>"Categoria adicionada",
             'alert-type'=>'success',
         );
         return back()->with($notification);
@@ -66,7 +66,7 @@ class CategoryController extends Controller
             'name'=>$request->name,
         ]);
         $notification=array(
-            'message'=>"Category has been updated",
+            'message'=>"Categoria editada",
             'alert-type'=>'success',
         );
         return back()->with($notification);
@@ -83,7 +83,7 @@ class CategoryController extends Controller
         $category = Category::find($request->id);
         $category->delete();
         $notification=array(
-            'message'=>"Category has been deleted",
+            'message'=>"Categoria deletada",
             'alert-type'=>'success',
         );
         return back()->with($notification);

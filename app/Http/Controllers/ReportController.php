@@ -27,10 +27,11 @@ class ReportController extends Controller
         $from_date = $request->from_date;
         $to_date = $request->to_date;
         if ($request->resource == 'sales'){
-            $sales = Sales::whereBetween(DB::raw('DATE(created_at)'), array($from_date, $to_date))->get();
+            $sales = Sales::where('status_sale', 1)->whereBetween(DB::raw('DATE(date_paid)'), array($from_date, $to_date))->get();
             $total_sales = $sales->count();
-            $total_cash =$sales->sum('total_price');
-            $title = "Sales Reports";
+            $total_cash =  $sales->sum('paid');
+            // $total_cash =$sales->sum('total_price');
+            $title = "Relatório de vendas";
             return view('reports',compact('sales','title','total_sales','total_cash'));
         }
         if($request->resource == "products"){

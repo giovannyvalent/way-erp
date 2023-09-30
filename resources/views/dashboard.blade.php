@@ -5,7 +5,7 @@
 
 @push('page-header')
 <div class="col-sm-12">
-	<h3 class="page-title">Welcome {{auth()->user()->name}}!</h3>
+	<h3 class="page-title">Bem-vindo(a), {{auth()->user()->name}}!</h3>
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item active">Dashboard</li>
 	</ul>
@@ -19,17 +19,25 @@
 			<div class="card">
 				<div class="card-body">
 					<div class="dash-widget-header">
-						<span class="dash-widget-icon text-primary border-primary">
+						<span class="dash-widget-icon text-danger border-danger">
 							<i class="fe fe-money"></i>
 						</span>
 						<div class="dash-count">
-							<h3>{{AppSettings::get('app_currency', '$')}} {{$today_sales}}</h3>
+							<h4>R$ {{number_format($today_sales, 2, ',','.')}}</h4>
 						</div>
 					</div>
 					<div class="dash-widget-info">
-						<h6 class="text-muted">Today Sales Cash</h6>
+						<h6 class="text-muted">Vendas de hoje</h6>
 						<div class="progress progress-sm">
-							<div class="progress-bar bg-primary w-50"></div>
+							@if($today_sales > 200)
+							<div class="progress-bar bg-danger w-25"></div>
+							@elseif($today_sales > 500)
+							<div class="progress-bar bg-danger w-50"></div>
+							@elseif($today_sales > 1000)
+							<div class="progress-bar bg-danger w-80"></div>
+							@else
+							<div class="progress-bar bg-danger w-0"></div>
+							@endif
 						</div>
 					</div>
 				</div>
@@ -39,7 +47,7 @@
 			<div class="card">
 				<div class="card-body">
 					<div class="dash-widget-header">
-						<span class="dash-widget-icon text-success">
+						<span class="dash-widget-icon text-danger border-danger">
 							<i class="fe fe-credit-card"></i>
 						</span>
 						<div class="dash-count">
@@ -48,10 +56,10 @@
 					</div>
 					<div class="dash-widget-info">
 						
-						<h6 class="text-muted">Product Categories</h6>
-						<div class="progress progress-sm">
-							<div class="progress-bar bg-success w-50"></div>
-						</div>
+						<h6 class="text-muted">Categoria de produtos</h6>
+						{{-- <div class="progress progress-sm">
+							<div class="progress-bar bg-danger w-100"></div>
+						</div> --}}
 					</div>
 				</div>
 			</div>
@@ -69,10 +77,10 @@
 					</div>
 					<div class="dash-widget-info">
 						
-						<h6 class="text-muted">Expired Products</h6>
-						<div class="progress progress-sm">
-							<div class="progress-bar bg-danger w-50"></div>
-						</div>
+						<h6 class="text-muted">Produtos expirados</h6>
+						{{-- <div class="progress progress-sm">
+							<div class="progress-bar bg-danger w-100"></div>
+						</div> --}}
 					</div>
 				</div>
 			</div>
@@ -81,7 +89,7 @@
 			<div class="card">
 				<div class="card-body">
 					<div class="dash-widget-header">
-						<span class="dash-widget-icon text-warning border-warning">
+						<span class="dash-widget-icon text-danger border-danger">
 							<i class="fe fe-users"></i>
 						</span>
 						<div class="dash-count">
@@ -90,10 +98,10 @@
 					</div>
 					<div class="dash-widget-info">
 						
-						<h6 class="text-muted">System Users</h6>
-						<div class="progress progress-sm">
-							<div class="progress-bar bg-warning w-50"></div>
-						</div>
+						<h6 class="text-muted">Usuário</h6>
+						{{-- <div class="progress progress-sm">
+							<div class="progress-bar bg-danger w-100"></div>
+						</div> --}}
 					</div>
 				</div>
 			</div>
@@ -104,17 +112,17 @@
 		
 			<div class="card card-table">
 				<div class="card-header">
-					<h4 class="card-title ">Today Sales</h4>
+					<h5 class="card-title ">Vendas de hoje</h5>
 				</div>
 				<div class="card-body">
 					<div class="table-responsive">
 						<table class="table table-hover table-center mb-0">
 							<thead>
 								<tr>
-									<th>Medicine</th>
-									<th>Quantity</th>
-									<th>Total Price</th>
-									<th>Date</th>
+									<th>Produto</th>
+									<th>Quantidade</th>
+									<th>Preço</th>
+									<th>Data</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -124,9 +132,9 @@
 											<td>{{$sale->product->purchase->name}}</td>
 											<td>{{$sale->quantity}}</td>
 											<td>
-												{{AppSettings::get('app_currency', '$')}} {{($sale->total_price)}}
+												{{AppSettings::get('app_currency', 'R$')}} {{($sale->paid)}}
 											</td>
-											<td>{{date_format(date_create($sale->created_at),"d M, Y")}}</td>
+											<td>{{date_format(date_create($sale->date_paid),"d/m/Y")}}</td>
 											
 										</tr>
 									@endif
@@ -145,7 +153,7 @@
 			<!-- Pie Chart -->
 			<div class="card card-chart">
 				<div class="card-header">
-					<h4 class="card-title">Resources Sum</h4>
+					<h5 class="card-title">Soma de recursos</h5>
 				</div>
 				<div class="card-body">
 					<div style="width:65%;">

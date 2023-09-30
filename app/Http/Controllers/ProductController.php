@@ -94,7 +94,7 @@ class ProductController extends Controller
             'description'=>$request->description,
         ]);
         $notification=array(
-            'message'=>"Product has been added",
+            'message'=>"Produto adicionado",
             'alert-type'=>'success',
         );
         return redirect()->route('products')->with($notification);
@@ -144,7 +144,7 @@ class ProductController extends Controller
             'description'=>$request->description,
         ]);
         $notification=array(
-            'message'=>"Product has been updated",
+            'message'=>"Produto editado",
             'alert-type'=>'success',
         );
         return redirect()->route('products')->with($notification);
@@ -161,7 +161,7 @@ class ProductController extends Controller
         $product = Product::find($request->id);
         $product->delete();
         $notification = array(
-            'message'=>"Product has been deleted",
+            'message'=>"Produto deletado",
             'alert-type'=>'success',
         );
         return back()->with($notification);

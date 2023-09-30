@@ -7,10 +7,10 @@
 
 @push('page-header')
 <div class="col-sm-12">
-	<h3 class="page-title">Edit Product</h3>
+	<h3 class="page-title">Editar produto</h3>
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-		<li class="breadcrumb-item active">Edit Product</li>
+		<li class="breadcrumb-item active">Editar</li>
 	</ul>
 </div>
 @endpush
@@ -30,7 +30,7 @@
 							
 							<div class="col-lg-12">
 								<div class="form-group">
-									<label>Product <span class="text-danger">*</span></label>
+									<label>Produto <span class="text-danger">*</span></label>
 									<select class="select2 form-select form-control" name="product"> 
 										@foreach ($purchased_products as $purchased_product)
 											<option @if($purchased_product->id==$product->purchase->id)selected @endif value="{{$purchased_product->id}}">{{$purchased_product->name}}</option>
@@ -45,14 +45,14 @@
 						<div class="row">
 							<div class="col-lg-6">
 								<div class="form-group">
-									<label>Selling Price<span class="text-danger">*</span></label>
+									<label>Preço de venda<span class="text-danger">*</span></label>
 									<input class="form-control" type="text" name="price" value="{{$product->price}}">
 								</div>
 							</div>
 	
 							<div class="col-lg-6">
 								<div class="form-group">
-									<label>Discount (%)<span class="text-danger">*</span></label>
+									<label>Desconto global (%)<span class="text-danger">*</span></label>
 									<input class="form-control" value="{{$product->discount}}" type="text" name="discount" value="{{old('discount')}}">
 								</div>
 							</div>
@@ -66,7 +66,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<div class="form-group">
-									<label>Descriptions <span class="text-danger">*</span></label>
+									<label>Descrição <span class="text-danger">*</span></label>
 									<textarea class="form-control service-desc" value="{{$product->description}}" name="description">{{$product->description}}</textarea>
 								</div>
 							</div>
@@ -75,7 +75,7 @@
 					</div>					
 					
 					<div class="submit-section">
-						<button class="btn btn-primary submit-btn" type="submit" name="form_submit" value="submit">Submit</button>
+						<button class="btn btn-primary submit-btn" type="submit" name="form_submit" value="submit">Salvar</button>
 					</div>
 				</form>
 			<!-- /Edit Medicine -->

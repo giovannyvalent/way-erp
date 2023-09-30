@@ -126,7 +126,7 @@
 												</div>
 
 											</div>
-											<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+											<button type="submit" class="btn btn-primary btn-block">Salvar</button>
 										</form>
 									</div>
 								</div>
@@ -166,7 +166,7 @@
 										<label>Confirm Password</label>
 										<input type="password" name="password_confirmation" class="form-control">
 									</div>
-									<button class="btn btn-primary" type="submit">Save Changes</button>
+									<button class="btn btn-primary" type="submit">Salvar</button>
 								</form>
 							</div>
 						</div>

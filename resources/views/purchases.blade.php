@@ -7,14 +7,14 @@
 
 @push('page-header')
 <div class="col-sm-7 col-auto">
-	<h3 class="page-title">Purchase</h3>
+	<h3 class="page-title">Compras</h3>
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-		<li class="breadcrumb-item active">Purchase</li>
+		<li class="breadcrumb-item active">compras</li>
 	</ul>
 </div>
 <div class="col-sm-5 col">
-	<a href="{{route('add-purchase')}}" class="btn btn-primary float-right mt-2">Add New</a>
+	<a href="{{route('add-purchase')}}" class="btn btn-primary float-right mt-2">Adicionar compra</a>
 </div>
 @endpush
 
@@ -29,13 +29,14 @@
 					<table id="datatable-export" class="table table-hover table-center mb-0">
 						<thead>
 							<tr>
-								<th>Medicine Name</th>
-								<th>Medicine Category</th>
-								<th>Purchase Price</th>
-								<th>Quantity</th>
-								<th>Supplier</th>
-								<th>Expire Date</th>
-								<th class="action-btn">Action</th>
+								<th>Nome</th>
+								<th>Categoria</th>
+								<th>Preço de compra</th>
+								<th>Qtd</th>
+								<th>Fornecedor</th>
+								<th>Data</th>
+								{{-- <th>Expire Date</th> --}}
+								<th class="action-btn">Ações</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -55,14 +56,15 @@
 								<td>{{AppSettings::get('app_currency', '$')}}{{$purchase->price}}</td>
 								<td>{{$purchase->quantity}}</td>
 								<td>{{$purchase->supplier->name}}</td>
-								<td>{{date_format(date_create($purchase->expiry_date),"d M, Y")}}</td>
+								<td>{{date_format($purchase->created_at, 'd/m/Y')}}</td>
+								{{-- <td>{{date_format(date_create($purchase->expiry_date),"d M, Y")}}</td> --}}
 								<td>
 									<div class="actions">
 										<a class="btn btn-sm bg-success-light" href="{{route('edit-purchase',$purchase)}}">
-											<i class="fe fe-pencil"></i> Edit
+											<i class="fe fe-pencil"></i> Editar
 										</a>
 										<a data-id="{{$purchase->id}}" href="javascript:void(0);" class="btn btn-sm bg-danger-light deletebtn" data-toggle="modal">
-											<i class="fe fe-trash"></i> Delete
+											<i class="fe fe-trash"></i> Deletar
 										</a>
 									</div>
 								</td>

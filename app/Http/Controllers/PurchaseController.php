@@ -51,9 +51,9 @@ class PurchaseController extends Controller
             'category'=>'required',
             'price'=>'required|min:1',
             'quantity'=>'required|min:1',
-            'expiry_date'=>'required',
+            // 'expiry_date'=>'required',
             'supplier'=>'required',
-            'image'=>'file|image|mimes:jpg,jpeg,png,gif',
+            // 'image'=>'file|image|mimes:jpg,jpeg,png,gif',
         ]);
         $imageName = null;
         if($request->hasFile('image')){
@@ -66,11 +66,11 @@ class PurchaseController extends Controller
             'supplier_id'=>$request->supplier,
             'price'=>$request->price,
             'quantity'=>$request->quantity,
-            'expiry_date'=>$request->expiry_date,
+            'expiry_date'=>isset($request->expiry_date) ? $request->expiry_date : null,
             'image'=>$imageName,
         ]);
         $notifications = array(
-            'message'=>"Purchase has been added",
+            'message'=>"Nova compra realizada",
             'alert-type'=>'success',
         );
         return redirect()->route('purchases')->with($notifications);
@@ -127,7 +127,7 @@ class PurchaseController extends Controller
             'image'=>$imageName,
         ]);
         $notifications = array(
-            'message'=>"Purchase has been updated",
+            'message'=>"Compra alterada",
             'alert-type'=>'success',
         );
         return redirect()->route('purchases')->with($notifications);
@@ -144,7 +144,7 @@ class PurchaseController extends Controller
         $purchase = Purchase::find($request->id);
         $purchase->delete();
         $notification =array(
-            'message'=>"Purchase has been deleted",
+            'message'=>"Compra deletada",
             'alert-type'=>'success'
         );
         return back()->with($notification);

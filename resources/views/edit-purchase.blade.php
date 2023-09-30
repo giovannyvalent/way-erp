@@ -9,10 +9,10 @@
 
 @push('page-header')
 <div class="col-sm-12">
-	<h3 class="page-title">Edit Purchase</h3>
+	<h3 class="page-title">Editar compra</h3>
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-		<li class="breadcrumb-item active">Edit Purchase</li>
+		<li class="breadcrumb-item active">Editar compra</li>
 	</ul>
 </div>
 @endpush
@@ -32,13 +32,13 @@
 						<div class="row">
 							<div class="col-lg-4">
 								<div class="form-group">
-									<label>Medicine Name<span class="text-danger">*</span></label>
+									<label>Nome<span class="text-danger">*</span></label>
 									<input class="form-control" type="text" value="{{$purchase->name}}" name="name" >
 								</div>
 							</div>
 							<div class="col-lg-4">
 								<div class="form-group">
-									<label>Category <span class="text-danger">*</span></label>
+									<label>Categoria <span class="text-danger">*</span></label>
 									<select class="select2 form-select form-control" name="category"> 
 										@foreach ($categories as $category)
 											<option @if($purchase->category->id == $category->id) selected @endif value="{{$category->id}}">{{$category->name}}</option>
@@ -48,7 +48,7 @@
 							</div>
 							<div class="col-lg-4">
 								<div class="form-group">
-									<label>Supplier <span class="text-danger">*</span></label>
+									<label>Fornecedor <span class="text-danger">*</span></label>
 									<select class="select2 form-select form-control" name="supplier"> 
 										@foreach ($suppliers as $supplier)
 											<option @if($purchase->supplier->id == $supplier->id) selected @endif value="{{$supplier->id}}">{{$supplier->name}}</option>
@@ -63,13 +63,13 @@
 						<div class="row">
 							<div class="col-lg-6">
 								<div class="form-group">
-									<label>Price<span class="text-danger">*</span></label>
+									<label>Preço<span class="text-danger">*</span></label>
 									<input class="form-control" value="{{$purchase->price}}" type="text" name="price">
 								</div>
 							</div>
 							<div class="col-lg-6">
 								<div class="form-group">
-									<label>Quantity<span class="text-danger">*</span></label>
+									<label>Quantidade<span class="text-danger">*</span></label>
 									<input class="form-control" value="{{$purchase->quantity}}" type="text" name="quantity">
 								</div>
 							</div>
@@ -80,22 +80,22 @@
 						<div class="row">
 							<div class="col-lg-6">
 								<div class="form-group">
-									<label>Expire Date<span class="text-danger">*</span></label>
+									<label>Data de expiração<span class="text-danger">*</span></label>
 									<input class="form-control" value="{{$purchase->expiry_date}}" type="date" name="expiry_date">
 								</div>
 							</div>
-							<div class="col-lg-6">
+							{{-- <div class="col-lg-6">
 								<div class="form-group">
 									<label>Medicine Image</label>
 									<input type="file" name="image" value="{{$purchase->image}}" class="form-control">
 								</div>
-							</div>
+							</div> --}}
 						</div>
 					</div>
 					
 					
 					<div class="submit-section">
-						<button class="btn btn-primary submit-btn" type="submit" >Submit</button>
+						<button class="btn btn-primary submit-btn" type="submit" >Salvar</button>
 					</div>
 				</form>
 				<!-- /Add Medicine -->

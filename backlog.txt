@@ -1,0 +1,5 @@
+Change logs:
+
+- Add coluna de cliente na tabela de sales: Criar migration
+- Add tabel payment_methods: Criar migration
+- Add colunas: paid, description, status_sale, debit_balance -> sales

@@ -88,7 +88,7 @@
 							</div>
 						</div>
 					</div>
-					<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+					<button type="submit" class="btn btn-primary btn-block">Salvar</button>
 				</form>
 			</div>
 		</div>
@@ -120,7 +120,7 @@
 						</div>
 						
 					</div>
-					<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+					<button type="submit" class="btn btn-primary btn-block">Salvar</button>
 				</form>
 			</div>
 		</div>

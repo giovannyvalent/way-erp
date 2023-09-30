@@ -2,7 +2,7 @@
 
 @section('content')
 <h1>Login</h1>
-<p class="account-subtitle">Access to our dashboard</p>
+<p class="account-subtitle">Acesso ao painel</p>
 @if (session('login_error'))
 <x-alerts.danger :error="session('login_error')" />
 @endif
@@ -22,7 +22,6 @@
 <!-- /Form -->
 
 {{-- <div class="text-center forgotpass"><a href="{{route('forgot-password')}}">Forgot Password?</a></div> --}}
-
-<div class="text-center dont-have">Don’t have an account? <a href="{{route('register')}}">Register</a></div>
+{{-- <div class="text-center dont-have">Don’t have an account? <a href="{{route('register')}}">Register</a></div> --}}
 @endsection
 

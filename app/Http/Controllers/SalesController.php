@@ -8,7 +8,9 @@ use App\Models\Product;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 use App\Events\PurchaseOutStock;
+use App\Models\PaymentMethods;
 use App\Notifications\StockAlert;
+use Carbon\Carbon;
 
 class SalesController extends Controller
 {
@@ -21,10 +23,24 @@ class SalesController extends Controller
     {
         $title = "sales";
         $products = Product::get();
-        $sales = Sales::with('product')->latest()->get();
+        $payments = PaymentMethods::get();
+
+        if(isset($_GET['date_paid_start'])){
+            $sales = Sales::whereBetween('date_paid', [$_GET['date_paid_start'], $_GET['date_paid_end']])->with('product')->latest()->get();
+        }else{
+            $sales = Sales::with('product')->latest()->get();
+        }
+        $date = Carbon::now()->format('Y-m-d');
+        $total_sales = $sales->where('status_sale', 1)->sum('paid');
+        $total_sales_pix = $sales->where('status_sale', 1)->where('payment_method', 1)->sum('paid');
+        $total_sales_cash = $sales->where('status_sale', 1)->where('payment_method', 2)->sum('paid');
+
+        $count_sales = $sales->count();
+        $count_sales_paid = $sales->where('status_sale', 1)->count();
                 
         return view('sales',compact(
-            'title','products','sales'
+            'title','products','sales', 'payments', 'date', 'total_sales',
+            'total_sales_pix', 'total_sales_cash', 'count_sales', 'count_sales_paid'
         ));
     }
 
@@ -38,7 +54,7 @@ class SalesController extends Controller
     {
         $this->validate($request,[
             'product'=>'required',
-            'quantity'=>'required|integer|min:1'
+            'quantity'=>'required|min:1'
         ]);
         $sold_product = Product::find($request->product);
         
@@ -46,8 +62,10 @@ class SalesController extends Controller
             sold item from
          purchases
         **/
+        $quantity_formated = preg_replace('/[,]/', '.', $request->quantity); 
+
         $purchased_item = Purchase::find($sold_product->purchase->id);
-        $new_quantity = ($purchased_item->quantity) - ($request->quantity);
+        $new_quantity = ($purchased_item->quantity) - ($quantity_formated);
         $notification = '';
         if (!($new_quantity < 0)){
 
@@ -58,25 +76,35 @@ class SalesController extends Controller
             /**
              * calcualting item's total price
             **/
-            $total_price = ($request->quantity) * ($sold_product->price);
+            $total_price = ($quantity_formated) * ($sold_product->price);
+            $price_formated = preg_replace('/[,]/', '.', $total_price); 
+            $paid_formated = preg_replace('/[,]/', '.', $request->paid); 
             Sales::create([
                 'product_id'=>$request->product,
-                'quantity'=>$request->quantity,
+                'quantity'=>$quantity_formated,
                 'total_price'=>$total_price,
+                'customer'=>$request->customer,
+                'payment_method'=>$request->payment_method,
+                'paid'=>$paid_formated,
+                'description'=>$request->description,
+                'status_sale'=>$request->status_sale,
+                'date_paid'=>$request->date_paid,
+                'user_id'=>auth()->user()->id
             ]);
 
             $notification = array(
-                'message'=>"Product has been sold",
+                'message'=>"Venda realizada",
                 'alert-type'=>'success',
             );
         } 
         if($new_quantity <=1 && $new_quantity !=0){
             // send notification 
-            $product = Purchase::where('quantity', '<=', 1)->first();
+            // $product = Purchase::where('quantity', '<=', 1)->first(); // legacy rules
+            $product = Purchase::where('id', $purchased_item->id)->first(); // new rules
             event(new PurchaseOutStock($product));
             // end of notification 
             $notification = array(
-                'message'=>"Product is running out of stock!!!",
+                'message'=>"Produto insuficiente no estoque!!",
                 'alert-type'=>'danger'
             );
             
@@ -104,36 +132,47 @@ class SalesController extends Controller
      */
     public function update(Request $request)
     {
-        $this->validate($request,[
-            'product'=>'required',
-            'quantity'=>'required|integer'
-        ]);
-        $sold_product = Product::find($request->product);
+
+        // $this->validate($request,[
+        //     // 'product'=>'required',
+        //     'quantity'=>'required|integer'
+        // ]);
+        $sale = Sales::find($request->id);
+        $sold_product = Product::find($sale->product_id);
         
-        /**update quantity of
-            sold item from
-         purchases
-        **/
         $purchased_item = Purchase::find($sold_product->purchase->id);
-        $new_quantity = ($purchased_item->quantity) - ($request->quantity);
+        // $new_quantity = ($purchased_item->quantity) - ($request->quantity);
+        $new_quantity = $purchased_item->quantity;
         if ($new_quantity > 0){
 
-            $purchased_item->update([
-                'quantity'=>$new_quantity,
-            ]);
+            if($request->status_sale == 'status_current'){
+                $status_sale = $sale->status_sale;
+            }else{
+                $status_sale = $request->status_sale;
+            }
+            // $purchased_item->update([
+            //     'quantity'=>$new_quantity,
+            // ]);
 
-            /**
-             * calcualting item's total price
-            **/
             $total_price = ($request->quantity) * ($sold_product->price);
-            Sales::create([
+            $paid_formated = preg_replace('/[,]/', '.', $request->paid); 
+
+            $sale->update([
                 'product_id'=>$request->product,
-                'quantity'=>$request->quantity,
-                'total_price'=>$total_price,
+                'quantity'=>$new_quantity,
+                // 'quantity'=>$request->quantity,
+                // 'total_price'=>$total_price,
+                'customer'=>$request->customer,
+                'paid'=>$paid_formated,
+                'description'=>$request->description,
+                'debit_balance'=>$request->debit_balance,
+                'date_paid'=>$request->date_paid,
+                'status_sale'=>$status_sale
+
             ]);
 
             $notification = array(
-                'message'=>"Product has been sold",
+                'message'=>"Venda realizada",
                 'alert-type'=>'success',
             );
         }
@@ -144,18 +183,24 @@ class SalesController extends Controller
             event(new PurchaseOutStock($product));
             // end of notification 
             $notification = array(
-                'message'=>"Product is running out of stock!!!",
+                'message'=>"Produto insuficiente no estoque!",
                 'alert-type'=>'danger'
             );
             
         }
         else{
             $notification = array(
-                'message'=>"Please check purchase product quantity",
+                'message'=>"Verifique a quantidade de produtos para compra",
                 'alert-type'=>'info',
             );
             return back()->with($notification);
         }
+
+        $notification = array(
+            'message'=> "Ok",
+            'alert-type'=> 'info',
+        );
+        return back()->with($notification);
     }
 
     /**
@@ -167,9 +212,15 @@ class SalesController extends Controller
     public function destroy(Request $request)
     {
         $sale = Sales::find($request->id);
+        $new_qty = $sale->product->purchase->quantity + $sale->quantity;
+
+        Purchase::where('id', $sale->product->purchase->id)->update([
+            'quantity' => $new_qty
+        ]);
+
         $sale->delete();
         $notification = array(
-            'message'=>"Sales has been deleted",
+            'message'=>"Venda deletada",
             'alert-type'=>'success'
         );
         return back()->with($notification);

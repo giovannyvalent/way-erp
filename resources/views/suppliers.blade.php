@@ -7,14 +7,14 @@
 
 @push('page-header')
 <div class="col-sm-7 col-auto">
-	<h3 class="page-title">Supplier</h3>
+	<h3 class="page-title">Fornecedor</h3>
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-		<li class="breadcrumb-item active">Supplier</li>
+		<li class="breadcrumb-item active">Fornecedor</li>
 	</ul>
 </div>
 <div class="col-sm-5 col">
-	<a href="{{route('add-supplier')}}" class="btn btn-primary float-right mt-2">Add New</a>
+	<a href="{{route('add-supplier')}}" class="btn btn-primary float-right mt-2">Adicionar</a>
 </div>
 @endpush
 
@@ -29,13 +29,13 @@
 					<table id="datatable-export" class="table table-hover table-center mb-0">
 						<thead>
 							<tr>
-								<th>Product</th>
-								<th>Name</th>
-								<th>Phone</th>
-								<th>Email</th>
-								<th>Address</th>
-								<th>Company</th>
-								<th class="action-btn">Action</th>
+								<th>Produto</th>
+								<th>Nome</th>
+								<th>Telefone</th>
+								<th>E-mail</th>
+								<th>Endereco</th>
+								<th>Empresa</th>
+								<th class="action-btn">Ações</th>
 							</tr>
 						</thead>
 						<tbody>
