@@ -9,10 +9,14 @@
 
 @push('page-header')
 <div class="col-sm-12">
+	@if($categories[0]['name'] !== 'DESPESAS')
 	<h3 class="page-title">Nova compra</h3>
+	@else
+	<h3 class="page-title">Nova despesa</h3>
+	@endif
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-		<li class="breadcrumb-item active">Nova compra</li>
+		<li class="breadcrumb-item active">Adicionar</li>
 	</ul>
 </div>
 @endpush
@@ -45,6 +49,7 @@
 									</select>
 								</div>
 							</div>
+							@if($categories[0]['name'] !== 'DESPESAS')
 							<div class="col-lg-4">
 								<div class="form-group">
 									<label>Fornecedor <span class="text-danger">*</span></label>
@@ -55,6 +60,7 @@
 									</select>
 								</div>
 							</div>
+							@endif
 						</div>
 					</div>
 					
@@ -62,7 +68,7 @@
 						<div class="row">
 							<div class="col-lg-6">
 								<div class="form-group">
-									<label>Preço de custo<span class="text-danger">*</span></label>
+									<label>Valor (R$)<span class="text-danger">*</span></label>
 									<input class="form-control" type="text" name="price">
 								</div>
 							</div>

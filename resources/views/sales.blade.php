@@ -7,18 +7,57 @@
 
 @push('page-header')
 <div class="col-sm-7 col-auto">
-	<h3 class="page-title">Vendas</h3>
+	<h3 class="page-title">Entradas</h3>
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-		<li class="breadcrumb-item active">Vendas</li>
+		<li class="breadcrumb-item active">Entradas</li>
 	</ul>
 </div>
 
-@can('create-sales')
-<div class="col-sm-12 col">
-	<a href="#add_sales" data-toggle="modal" class="btn btn-primary float-right mt-2">Nova venda</a>
+{{-- @can('create-sales') --}}
+<!-- Large modal -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+	<div class="modal-header">
+		<h5 class="modal-title">Ordens de produção</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+    <div class="modal-body">
+		@foreach ($sales as $key => $sale)
+		<p>
+			@if(isset($sale->order($sale->id)->status))
+			@if($sale->order($sale->id)->status == 'concluido')
+			<span class="badge badge-pill badge-success">{{$key + 1}}</span> 
+		    --> Status: {{$sale->order($sale->id)->status}} 
+			-- Resposável: {{$sale->orderResposavel($sale->id)->name}}  
+			-- Produto: {{$sale->product->purchase->name}}
+			-- Cliente: {{$sale->customer}}
+			-- <a style="color: blue" href="#" data-toggle="modal" data-target=".bd-example-modal-lg-{{$sale->id}}">Visualizar</a>
+			@else
+			<span class="badge badge-pill badge-warning">{{$key + 1}}</span> 
+	        --> Status: {{$sale->order($sale->id)->status}} 
+			-- Resposável: {{$sale->orderResposavel($sale->id)->name}}  
+			-- Produto: {{$sale->product->purchase->name}}
+			-- Cliente: {{$sale->customer}}
+			-- <a style="color: blue" href="#" data-toggle="modal" data-target=".bd-example-modal-lg-{{$sale->id}}">Visualizar</a>
+			@endif
+			@endif
+		</p>
+		@endforeach
+	</div>
+    </div>
+  </div>
 </div>
-@endcan
+<div class="col-sm-12 col">
+	<a href="#add_sales" data-toggle="modal" class="btn btn-primary float-right mt-2">Nova entrada</a>
+</div>
+<div class="col-sm-12 col">
+	<button data-toggle="modal" data-target=".bd-example-modal-lg" class="btn btn-primary float-right mt-2">Ordens de Produção</button>
+</div>
+{{-- @endcan --}}
 @endpush
 
 @section('content')
@@ -30,20 +69,20 @@
 			  <div class="col">
 				@if(isset($_GET['date_paid_start']))
 					De
-					<input type="date" name="date_paid_start" value="{{$_GET['date_paid_start']}}" placeholDer="data de entrada" class="form-control">
+					<input type="date" name="date_paid_start" value="{{$_GET['date_paid_start']}}" placeholDer="data de pagamento" class="form-control">
 				@else
 					De
-					<input type="date" name="date_paid_start" id="" placeholder="data de entrada" class="form-control" required>
+					<input type="date" name="date_paid_start" id="" value="{{$start_month}}" placeholder="data de pagamento" class="form-control" required>
 				@endif
 			  </div>
 		
 			  <div class="col">
 				@if(isset($_GET['date_paid_end']))
 					Até
-					<input type="date" name="date_paid_end" value="{{$_GET['date_paid_end']}}" placeholder="data de entrada" class="form-control">
+					<input type="date" name="date_paid_end" value="{{$_GET['date_paid_end']}}" placeholder="data de pagamento" class="form-control">
 				@else
 					Até
-					<input type="date" name="date_paid_end" id="" placeholder="data de entrada" class="form-control" required>
+					<input type="date" name="date_paid_end" id="" value="{{$date}}" placeholder="data de pagamento" class="form-control" required>
 				@endif
 			  </div>
 		
@@ -80,13 +119,13 @@
 					<table id="datatable-export" class="table table-hover table-center mb-0">
 						<thead>
 							<tr>
+								<th>Criação</th>
 								<th>Venda</th>
 								<th>Cliente</th>
 								<th>Qtd</th>
 								<th>M.P</th>
 								<th>Valor pago</th>
 								<th>Usuário</th>
-								<th>Data de entrada</th>
 								<th>Status</th>
 								<th class="action-btn">Opções</th>
 							</tr>
@@ -95,11 +134,17 @@
 							@foreach ($sales as $sale)
 								@if (!(empty($sale->product->purchase)))
 									<tr>
+										<td>{{date_format($sale->created_at, 'd/m/Y')}}</td>
 										<td>{{$sale->product->purchase->name}}</td>
 										<td>{{$sale->customer}}</td>
 										<td>{{$sale->quantity}}</td>
 										<td>{{$sale->paymentMethod->name}}</td>
-										<td> R$ {{($sale->paid)}}</td>
+										<td> 
+											R$ {{($sale->paid)}} 
+											@if($sale->partial_sale !== null)
+											<strong><p style="color: red">Pag: {{$sale->partial_sale}}</p></strong>
+											@endif
+										</td>
 										<td> 
 											@if(isset($sale->userSale))
 												{{($sale->userSale->name)}}
@@ -132,6 +177,7 @@
 												data-paid="{{$sale->paid}}"
 												data-description="{{$sale->description}}"
 												data-status_sale="{{$sale->status_sale}}"
+												data-partial_sale="{{$sale->partial_sale}}"
 												data-payment_method="{{$sale->paymentMethod->name}}"
 												data-total_price="{{$sale->total_price}}"
 												data-debit_balance="{{$sale->debit_balance}}"
@@ -142,6 +188,73 @@
 												<a data-id="{{$sale->id}}" href="javascript:void(0);" class="btn btn-sm bg-danger-light deletebtn" data-toggle="modal">
 													<i class="fe fe-trash"></i> Deletar
 												</a>
+												<!-- Large modal -->
+												<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg-{{$sale->id}}">Produção</button>
+
+												<div class="modal fade bd-example-modal-lg-{{$sale->id}}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+													<div class="modal-dialog modal-lg">
+														<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title">Ordem de produção</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+															<h6><strong>Pedido:</strong></h6>
+															<p>Produto: {{$sale->product->purchase->name}} </p>
+															<p>Cliente: {{$sale->customer}}</p>
+															<p>Descrição: {{$sale->description}} </p>
+															<p>Quantidade: {{$sale->quantity}}</p>
+															<p>Status:
+																@if(isset($sale->order($sale->id)->status) && $sale->order($sale->id)->status)
+																<strong style="color: rgb(230, 15, 15);">{{$sale->order($sale->id)->status}}</strong>
+																@endif
+															</p>
+														</div>
+														<div class="modal-body">
+															<form method="POST" action="{{route('order')}}">
+																<input type="hidden" class="form-control" name="sale_id" value="{{$sale->id}}">
+																@csrf
+																{{-- @method("PUT") --}}
+																<div class="row form-row">
+																	<div class="col-12">
+																		<div class="form-group">
+																			<label>Resposável</label>
+																			<select class="form-select form-control" aria-label="Default select example" name="user_id" required>
+																				<option selected>Selecione</option>
+																				@foreach ($users as $user)
+																					<option value="{{$user->id}}" {{isset($sale->order($sale->id)->user_id) && $sale->order($sale->id)->user_id == $user->id ? 'selected' : ''}}>{{$user->name}}</option>
+																				@endforeach
+																			</select>
+																		</div>
+																	</div>
+											
+																	<div class="col-6">
+																		<div class="form-group">
+																			<label>Produto</label>
+																			<input type="text" class="form-control" value="{{$sale->product->purchase->name}}" disabled>
+																		</div>
+																	</div>
+
+																	<div class="col-6">
+																		<div class="form-group">
+																			<label>Status da produção</label>
+																			<select class="form-select form-control" aria-label="Default select example" name="status" required>
+																				<option>Selecione um status</option>
+																				<option value="concluido" {{isset($sale->order($sale->id)->status) && $sale->order($sale->id)->status == 'concluido' ? 'selected' : ''}}>Concluido</option>
+																				<option value="pendente" {{isset($sale->order($sale->id)->status) && $sale->order($sale->id)->status == 'pendente' ? 'selected' : ''}}>Pendente</option>
+																			</select>
+																		</div>
+																	</div>
+											
+																</div>
+																<button type="submit" class="col-3 float-right mt-2 btn btn-primary btn-block">Salvar</button>
+															</form>
+														</div>
+														</div>
+													</div>
+												</div>
 											</div>
 										</td>
 									</tr>
@@ -227,14 +340,27 @@
 							</div>
 						</div>
 
-						<div class="col-6">
+						<div class="col-4">
 							<div class="form-group">
-								<label>Data de entrada</label>
+								<label>Data do pagameto</label>
 								<input type="date" class="form-control" name="date_paid" value="{{$date}}">
 							</div>
 						</div>
 
-						<div class="col-6">
+						<div class="col-4">
+							<div class="form-group">
+								<label>Pagamento de entrada?</label>
+								<select class="form-select form-control" aria-label="Default select example" name="partial_sale">
+									<option selected>Selecione uma opção</option>
+									<option value="1">1/entrada</option>
+									<option value="2">2/entrada</option>
+									<option value="3">3/entrada</option>
+									<option value="4">4/entrada</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="col-4">
 							<div class="form-group">
 								<label>Status da entrada</label>
 								<select class="form-select form-control" aria-label="Default select example" name="status_sale" required>
@@ -326,17 +452,37 @@
 							</div>
 						</div>
 
-						<div class="col-6 mt-2">
+						<div class="col-3 mt-2">
 							<div class="form-group">
 								<label>Data de entrada</label>
 								<input type="date" class="form-control edit_date_paid" name="date_paid">
 							</div>
 						</div>
 
+						<div class="col-3 mt-2">
+							<div class="form-group">
+								<label>Pagamento de entrada:</label>
+								<input style="border: none;
+								border-radius: 50px;
+								font-weight: initial;
+								color: rgb(255, 255, 255);
+								background-color: rgb(202, 42, 42);
+								max-width: 20px;
+								padding-left: 7px;" type="text" class="edit_partial_sale">
+								<select class="form-select form-control" aria-label="Default select example" name="partial_sale">
+									<option value="status_current_partial" selected>Manter status atual</option>
+									<option value="1">1/entrada</option>
+									<option value="2">2/entrada</option>
+									<option value="3">3/entrada</option>
+									<option value="4">4/entrada</option>
+								</select>
+							</div>
+						</div>
+
 						<div class="col-6 mt-2">
 							<div class="form-group">
 								<label>Status atual da entrada:</label>
-								<input style="border: none; border-radius: 2px; font-weight: 700; color: rgb(255, 255, 255); background-color: rgb(202, 42, 42)" type="text" class="edit_status_sale">
+								<input style="border: none; border-radius: 2px; font-weight: 700; color: rgb(255, 255, 255); background-color: rgb(202, 42, 42); margin-bottom:5px" type="text" class="edit_status_sale">
 								<select class="form-select form-control" aria-label="Default select example" name="status_sale">
 									<option value="status_current" selected>Manter status atual</option>
 									<option value="1">Quitado</option>
@@ -378,8 +524,8 @@
 				}else{
 					status_sale_current = '    Aberta / Pendente' 
 				}
-				console.log(status_sale_current)
 				var status_sale = status_sale_current;
+				var partial_sale = $(this).data('partial_sale');
 				var payment_method = $(this).data('payment_method');
 				var total_price = $(this).data('total_price');
 				var debit_balance = $(this).data('debit_balance');
@@ -394,6 +540,7 @@
 				$('.edit_paid').val(paid);
 				$('.edit_description').val(description);
 				$('.edit_status_sale').val(status_sale);
+				$('.edit_partial_sale').val(partial_sale);
 				$('.edit_payment_method').val(payment_method);
 				$('.edit_total_price').val(total_price);
 				$('.edit_debit_balance').val(debit_balance);

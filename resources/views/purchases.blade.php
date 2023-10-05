@@ -15,6 +15,7 @@
 </div>
 <div class="col-sm-5 col">
 	<a href="{{route('add-purchase')}}" class="btn btn-primary float-right mt-2">Adicionar compra</a>
+	<a href="{{route('add-expenses')}}" class="btn btn-primary float-right mt-2 mr-2">Adicionar despesa</a>
 </div>
 @endpush
 
@@ -29,12 +30,12 @@
 					<table id="datatable-export" class="table table-hover table-center mb-0">
 						<thead>
 							<tr>
+								<th>Data</th>
 								<th>Nome</th>
 								<th>Categoria</th>
 								<th>Preço de compra</th>
 								<th>Qtd</th>
 								<th>Fornecedor</th>
-								<th>Data</th>
 								{{-- <th>Expire Date</th> --}}
 								<th class="action-btn">Ações</th>
 							</tr>
@@ -42,6 +43,7 @@
 						<tbody>
 							@foreach ($purchases as $purchase)
 							<tr>
+								<td>{{date_format($purchase->created_at, 'd/m/Y')}}</td>
 								<td>
 									<h2 class="table-avatar">
 										@if(!empty($purchase->image))
@@ -55,9 +57,13 @@
 								<td>{{$purchase->category->name}}</td>
 								<td>{{AppSettings::get('app_currency', '$')}}{{$purchase->price}}</td>
 								<td>{{$purchase->quantity}}</td>
-								<td>{{$purchase->supplier->name}}</td>
-								<td>{{date_format($purchase->created_at, 'd/m/Y')}}</td>
-								{{-- <td>{{date_format(date_create($purchase->expiry_date),"d M, Y")}}</td> --}}
+								<td>
+									@if(isset($purchase->supplier->name))
+									{{$purchase->supplier->name}}
+									@else
+									N/A
+									@endif
+								</td>
 								<td>
 									<div class="actions">
 										<a class="btn btn-sm bg-success-light" href="{{route('edit-purchase',$purchase)}}">

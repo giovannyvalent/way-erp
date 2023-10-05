@@ -26,16 +26,17 @@
 				</li>
 				
 				<li class="submenu">
-					<a style="font-size: 12px" href="#"><i class="fe fe-star-o"></i> <span> Compras</span> <span class="menu-arrow"></span></a>
+					<a style="font-size: 12px" href="#"><i class="fe fe-star-o"></i> <span> Compras e despesas</span> <span class="menu-arrow"></span></a>
 					<ul style="display: none;">
-						<li><a style="font-size: 12px" class="{{ Request::routeIs('purchases') ? 'active' : '' }}" href="{{route('purchases')}}">Compras</a></li>
+						<li><a style="font-size: 12px" class="{{ Request::routeIs('purchases') ? 'active' : '' }}" href="{{route('purchases')}}">Lista</a></li>
 						{{--@can('create-purchase')--}}
 						<li><a style="font-size: 12px" class="{{ Request::routeIs('add-purchase') ? 'active' : '' }}" href="{{route('add-purchase')}}">Nova compra</a></li>
+						<li><a style="font-size: 12px" class="{{ Request::routeIs('add-expenses') ? 'active' : '' }}" href="{{route('add-expenses')}}">Nova despesa</a></li>
 						{{--@endcan--}}
 					</ul>
 				</li>
 
-				<li><a  style="font-size: 12px"class="{{ Request::routeIs('sales') ? 'active' : '' }}" href="{{route('sales')}}"><i class="fe fe-activity"></i> <span>Vendas</span></a></li>
+				<li><a  style="font-size: 12px"class="{{ Request::routeIs('sales') ? 'active' : '' }}" href="{{route('sales')}}"><i class="fe fe-activity"></i> <span>Entradas</span></a></li>
 
 				<li class="submenu">
 					<a style="font-size: 12px" href="#"><i class="fe fe-user"></i> <span> Fornecedores</span> <span class="menu-arrow"></span></a>

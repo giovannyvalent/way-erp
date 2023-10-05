@@ -183,7 +183,7 @@
 							</thead>
 							<tbody>
 								@foreach ($purchases as $purchase)
-									@if(!empty($purchase->supplier) && !empty($purchase->category))
+									{{-- @if(!empty($purchase->supplier) && !empty($purchase->category)) --}}
 									<tr>
 										<td>
 											<h2 class="table-avatar">
@@ -198,7 +198,13 @@
 										<td>{{$purchase->category->name}}</td>
 										<td>{{AppSettings::get('app_currency', '$')}}{{$purchase->price}}</td>
 										<td>{{$purchase->quantity}}</td>
-										<td>{{$purchase->supplier->name}}</td>
+										<td>
+											@if(isset($purchase->supplier))
+											{{$purchase->supplier->name}}
+											@else 
+											N/A
+											@endif
+										</td>
 										<td>{{date_format($purchase->created_at, 'd/m/Y')}}</td>
 										{{-- <td>{{date_format(date_create($purchase->expiry_date),"d M, Y")}}</td> --}}
 										<td>
@@ -214,7 +220,7 @@
 											</div>
 										</td>
 									</tr>
-									@endif
+									{{-- @endif --}}
 								@endforeach
 								
 							</tbody>
@@ -260,7 +266,7 @@
 								<label>Recurso</label>
 								<select class="form-control select" name="resource"> 
 									<option value="products">Produtos cadastrados</option>
-									<option value="purchases">Compras realizadas</option>
+									<option value="purchases">Compras e despesas</option>
 									<option value="sales">Vendas </option>
 								</select>
 							</div>

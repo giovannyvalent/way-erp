@@ -75,10 +75,18 @@ Route::group(['middleware'=>['auth']],function (){
     Route::put('purchases/{purchase}',[PurchaseController::class,'update']);
     Route::delete('purchases',[PurchaseController::class,'destroy']);
 
+    Route::get('add-expenses',[PurchaseController::class,'createExpenses'])->name('add-expenses');
+    Route::post('add-expenses',[PurchaseController::class,'store']);
+    // Route::get('purchases/{purchase}',[PurchaseController::class,'show'])->name('edit-purchase');
+    // Route::put('purchases/{purchase}',[PurchaseController::class,'update']);
+    // Route::delete('purchases',[PurchaseController::class,'destroy']);
+
     Route::get('sales',[SalesController::class,'index'])->name('sales');
     Route::post('sales',[SalesController::class,'store']);
     Route::put('sales',[SalesController::class,'update']);
     Route::delete('sales',[SalesController::class,'destroy']);
+
+    Route::post('order',[SalesController::class,'orderUpdate'])->name('order');
 
     Route::get('permissions',[PermissionController::class,'index'])->name('permissions');
     Route::post('permissions',[PermissionController::class,'store']);

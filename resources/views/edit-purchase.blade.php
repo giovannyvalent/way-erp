@@ -46,6 +46,7 @@
 									</select>
 								</div>
 							</div>
+							@if($purchase->category->name !== 'DESPESAS')
 							<div class="col-lg-4">
 								<div class="form-group">
 									<label>Fornecedor <span class="text-danger">*</span></label>
@@ -56,6 +57,7 @@
 									</select>
 								</div>
 							</div>
+							@endif
 						</div>
 					</div>
 					
@@ -63,7 +65,7 @@
 						<div class="row">
 							<div class="col-lg-6">
 								<div class="form-group">
-									<label>Preço<span class="text-danger">*</span></label>
+									<label>Valor (R$)<span class="text-danger">*</span></label>
 									<input class="form-control" value="{{$purchase->price}}" type="text" name="price">
 								</div>
 							</div>

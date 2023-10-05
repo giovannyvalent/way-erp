@@ -15,12 +15,21 @@ class Sales extends Model
     use HasFactory,SoftDeletes;
 
     protected $fillable = [
-        'product_id','quantity','total_price','customer','paid','description','status_sale','payment_method','debit_balance', 'date_paid', 'user_id'
+        'product_id','quantity','total_price','customer','paid','description','status_sale','payment_method','debit_balance', 'date_paid', 'user_id', 'partial_sale'
     ];
 
     public function userSale(){
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function order($id){
+       return OrderProductions::where('sale_id', $id)->get()->first();
+    }
+
+    public function orderResposavel($id){
+        $order = OrderProductions::where('sale_id', $id)->get()->first();
+        return User::find($order->user_id);
+     }
 
     public function product(){
         return $this->belongsTo(Product::class, 'product_id');

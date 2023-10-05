@@ -38,6 +38,16 @@ class PurchaseController extends Controller
         ));
     }
 
+    public function createExpenses()
+    {
+        $title = "Adicionar despesa";
+        $categories = Category::where('name', '=', 'DESPESAS')->get();
+        $suppliers = Supplier::get();
+        return view('add-purchase',compact(
+            'title','categories','suppliers'
+        ));
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -46,33 +56,54 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request,[
-            'name'=>'required|max:200',
-            'category'=>'required',
-            'price'=>'required|min:1',
-            'quantity'=>'required|min:1',
-            // 'expiry_date'=>'required',
-            'supplier'=>'required',
-            // 'image'=>'file|image|mimes:jpg,jpeg,png,gif',
-        ]);
-        $imageName = null;
-        if($request->hasFile('image')){
-            $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('storage/purchases'), $imageName);
+        $categorie = Category::where('id', '=', $request->category)->get()->first();
+        if($categorie->name !== 'DESPESAS'){
+            $this->validate($request,[
+                'name'=>'required|max:200',
+                'category'=>'required',
+                'price'=>'required|min:1',
+                'quantity'=>'required|min:1',
+                // 'expiry_date'=>'required',
+                'supplier'=>'required',
+                // 'image'=>'file|image|mimes:jpg,jpeg,png,gif',
+            ]);
+
+            $imageName = null;
+            if($request->hasFile('image')){
+                $imageName = time().'.'.$request->image->extension();
+                $request->image->move(public_path('storage/purchases'), $imageName);
+            }
+            $price_formatted = preg_replace('/[,]/', '.', $request->price); 
+            Purchase::create([
+                'name'=>$request->name,
+                'category_id'=>$request->category,
+                'supplier_id'=>$request->supplier,
+                'price'=>$price_formatted,
+                'quantity'=>$request->quantity,
+                'expiry_date'=>isset($request->expiry_date) ? $request->expiry_date : null,
+                'image'=>$imageName,
+            ]);
+            $notifications = array(
+                'message'=>"Nova compra realizada",
+                'alert-type'=>'success',
+            );
+        }else{
+            $price_formatted = preg_replace('/[,]/', '.', $request->price); 
+            Purchase::create([
+                'name'=>$request->name,
+                'category_id'=>$request->category,
+                'supplier_id'=>null,
+                'price'=>$price_formatted,
+                'quantity'=>$request->quantity,
+                'expiry_date'=>isset($request->expiry_date) ? $request->expiry_date : null,
+                'image'=>null,
+            ]);
+            $notifications = array(
+                'message'=>"Nova despesa!",
+                'alert-type'=>'success',
+            );
         }
-        Purchase::create([
-            'name'=>$request->name,
-            'category_id'=>$request->category,
-            'supplier_id'=>$request->supplier,
-            'price'=>$request->price,
-            'quantity'=>$request->quantity,
-            'expiry_date'=>isset($request->expiry_date) ? $request->expiry_date : null,
-            'image'=>$imageName,
-        ]);
-        $notifications = array(
-            'message'=>"Nova compra realizada",
-            'alert-type'=>'success',
-        );
+
         return redirect()->route('purchases')->with($notifications);
     }
 
@@ -102,34 +133,51 @@ class PurchaseController extends Controller
      */
     public function update(Request $request, Purchase $purchase)
     {
-        $this->validate($request,[
-            'name'=>'required|max:200',
-            'category'=>'required',
-            'price'=>'required',
-            'quantity'=>'required',
-            'expiry_date'=>'required',
-            'supplier'=>'required',
-            'image'=>'file|image|mimes:jpg,jpeg,png,gif',
-        ]);
-        $imageName = null;
-        if($request->hasFile('image')){
-            $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('storage/purchases'), $imageName);
+        $categorie = Category::where('id', '=', $request->category)->get()->first();
+        $price_formatted = preg_replace('/[,]/', '.', $request->price); 
+        if($categorie->name !== 'DESPESAS'){
+            $this->validate($request,[
+                'name'=>'required|max:200',
+                'category'=>'required',
+                'price'=>'required',
+                'quantity'=>'required',
+                'expiry_date'=>'required',
+                'supplier'=>'required',
+                'image'=>'file|image|mimes:jpg,jpeg,png,gif',
+            ]);
+            $imageName = null;
+            if($request->hasFile('image')){
+                $imageName = time().'.'.$request->image->extension();
+                $request->image->move(public_path('storage/purchases'), $imageName);
+            }
+            
+            $purchase->update([
+                'name'=>$request->name,
+                'category_id'=>$request->category,
+                'supplier_id'=>$request->supplier,
+                'price'=>$price_formatted,
+                'quantity'=>$request->quantity,
+                'expiry_date'=>$request->expiry_date,
+                'image'=>$imageName,
+            ]);
+            $notifications = array(
+                'message'=>"Compra alterada",
+                'alert-type'=>'success',
+            );
+        }else{
+            $price_formatted = preg_replace('/[,]/', '.', $request->price); 
+            $purchase->update([
+                'name'=>$request->name,
+                'category_id'=>$request->category,
+                'price'=>$price_formatted,
+                'quantity'=>$request->quantity,
+                'expiry_date'=>$request->expiry_date,
+            ]);
+            $notifications = array(
+                'message'=>"Despesa alterada",
+                'alert-type'=>'success',
+            );
         }
-        
-        $purchase->update([
-            'name'=>$request->name,
-            'category_id'=>$request->category,
-            'supplier_id'=>$request->supplier,
-            'price'=>$request->price,
-            'quantity'=>$request->quantity,
-            'expiry_date'=>$request->expiry_date,
-            'image'=>$imageName,
-        ]);
-        $notifications = array(
-            'message'=>"Compra alterada",
-            'alert-type'=>'success',
-        );
         return redirect()->route('purchases')->with($notifications);
     }
 

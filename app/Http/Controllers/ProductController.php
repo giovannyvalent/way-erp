@@ -31,7 +31,8 @@ class ProductController extends Controller
 
     public function create(){
         $title= "Add Product";
-        $products = Purchase::get();
+        $category_expense = Category::where('name', 'DESPESAS')->get()->first();
+        $products = Purchase::whereNotIn('category_id', [$category_expense->id])->get();
         return view('add-product',compact(
             'title','products',
         ));
@@ -111,7 +112,8 @@ class ProductController extends Controller
     {
         $title = "Edit Product";
         $product = Product::find($id);
-        $purchased_products = Purchase::get();
+        $category_expense = Category::where('name', 'DESPESAS')->get()->first();
+        $purchased_products = Purchase::whereNotIn('category_id', [$category_expense->id])->get();
         return view('edit-product',compact(
             'title','product','purchased_products'
         ));

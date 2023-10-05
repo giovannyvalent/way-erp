@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use DataTables;
 use App\Models\Sales;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 use App\Events\PurchaseOutStock;
+use App\Models\OrderProductions;
 use App\Models\PaymentMethods;
 use App\Notifications\StockAlert;
 use Carbon\Carbon;
@@ -24,23 +26,27 @@ class SalesController extends Controller
         $title = "sales";
         $products = Product::get();
         $payments = PaymentMethods::get();
+        $start_month = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $date = Carbon::now()->format('Y-m-d');
 
         if(isset($_GET['date_paid_start'])){
             $sales = Sales::whereBetween('date_paid', [$_GET['date_paid_start'], $_GET['date_paid_end']])->with('product')->latest()->get();
         }else{
-            $sales = Sales::with('product')->latest()->get();
+            $sales = Sales::whereBetween('date_paid', [$start_month, $date])->with('product')->latest()->get();
         }
-        $date = Carbon::now()->format('Y-m-d');
+
         $total_sales = $sales->where('status_sale', 1)->sum('paid');
         $total_sales_pix = $sales->where('status_sale', 1)->where('payment_method', 1)->sum('paid');
         $total_sales_cash = $sales->where('status_sale', 1)->where('payment_method', 2)->sum('paid');
 
         $count_sales = $sales->count();
         $count_sales_paid = $sales->where('status_sale', 1)->count();
+
+        $users = User::all();
                 
         return view('sales',compact(
             'title','products','sales', 'payments', 'date', 'total_sales',
-            'total_sales_pix', 'total_sales_cash', 'count_sales', 'count_sales_paid'
+            'total_sales_pix', 'total_sales_cash', 'count_sales', 'count_sales_paid', 'users', 'start_month'
         ));
     }
 
@@ -79,7 +85,7 @@ class SalesController extends Controller
             $total_price = ($quantity_formated) * ($sold_product->price);
             $price_formated = preg_replace('/[,]/', '.', $total_price); 
             $paid_formated = preg_replace('/[,]/', '.', $request->paid); 
-            Sales::create([
+            $sale = Sales::create([
                 'product_id'=>$request->product,
                 'quantity'=>$quantity_formated,
                 'total_price'=>$total_price,
@@ -89,11 +95,18 @@ class SalesController extends Controller
                 'description'=>$request->description,
                 'status_sale'=>$request->status_sale,
                 'date_paid'=>$request->date_paid,
-                'user_id'=>auth()->user()->id
+                'user_id'=>auth()->user()->id,
+                'partial_sale'=>isset($request->partial_sale) ? $request->partial_sale : null
+            ]);
+
+            OrderProductions::create([
+                'user_id' => null,
+                'sale_id' => $sale->id,
+                'status' => null
             ]);
 
             $notification = array(
-                'message'=>"Venda realizada",
+                'message'=>"Entrada cadastrada",
                 'alert-type'=>'success',
             );
         } 
@@ -150,16 +163,14 @@ class SalesController extends Controller
             }else{
                 $status_sale = $request->status_sale;
             }
-            // $purchased_item->update([
-            //     'quantity'=>$new_quantity,
-            // ]);
-
+            
+            $partial_sale_current = $sale->partial_sale;
             $total_price = ($request->quantity) * ($sold_product->price);
             $paid_formated = preg_replace('/[,]/', '.', $request->paid); 
 
             $sale->update([
                 'product_id'=>$request->product,
-                'quantity'=>$new_quantity,
+                // 'quantity'=>$new_quantity,
                 // 'quantity'=>$request->quantity,
                 // 'total_price'=>$total_price,
                 'customer'=>$request->customer,
@@ -167,7 +178,10 @@ class SalesController extends Controller
                 'description'=>$request->description,
                 'debit_balance'=>$request->debit_balance,
                 'date_paid'=>$request->date_paid,
-                'status_sale'=>$status_sale
+                'status_sale'=>$status_sale,
+                'partial_sale'=> isset($request->partial_sale) 
+                && $request->partial_sale !== 'status_current_partial'  
+                ? $request->partial_sale : $partial_sale_current
 
             ]);
 
@@ -201,6 +215,31 @@ class SalesController extends Controller
             'alert-type'=> 'info',
         );
         return back()->with($notification);
+    }
+
+    public function orderUpdate(Request $request){
+        $order = OrderProductions::where('sale_id', $request->sale_id)->get()->first();
+        if(empty($order)){
+            OrderProductions::create([
+                'user_id' => $request->user_id == 'Selecione' ? null : $request->user_id,
+                'sale_id' => $request->sale_id,
+                'status' => $request->status
+            ]);
+        }else{
+            OrderProductions::where('sale_id', $request->sale_id)->update([
+                'user_id' => $request->user_id,
+                'sale_id' => $request->sale_id,
+                'status' => $request->status
+            ]);
+        }
+
+        $notification = array(
+            'message'=>"Ok",
+            'alert-type'=>'success'
+        );
+
+        return back()->with($notification);
+
     }
 
     /**
