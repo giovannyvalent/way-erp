@@ -18,6 +18,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Inerti\IssueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -117,6 +118,13 @@ Route::group(['middleware'=>['auth']],function (){
 
     Route::get('backup',[BackupController::class,'index'])->name('backup-app');
     Route::get('backup-app',[BackupController::class,'database'])->name('backup-db');
+
+    Route::get('issues',[IssueController::class,'index'])->name('issues');
+    Route::get('add-issue',[IssueController::class,'create'])->name('add-issue');
+    Route::post('add-issue',[IssueController::class,'store']);
+    Route::get('issues/{issue}',[IssueController::class,'show'])->name('edit-issue');
+    Route::put('issues/{issue}',[IssueController::class,'update']);
+    Route::delete('issues',[IssueController::class,'destroy']);
 });
 
 Route::get('/', function () {
