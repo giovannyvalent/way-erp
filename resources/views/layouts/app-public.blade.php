@@ -79,7 +79,7 @@
         <div class="main-wrapper">
 
 			<!-- Header -->
-            @include('includes.header')
+            {{-- @include('includes.header') --}}
 			<!-- /Header -->
 
 			<!-- Sidebar -->
@@ -90,6 +90,15 @@
             <div class="page-wrapper-public">
 
                 <div class="content col-lg-12">
+
+					<center>
+						<a class="logo" style="font-size: 30px">
+							{{-- <img src="@if(!empty(AppSettings::get('logo'))) {{asset('storage/'.AppSettings::get('logo'))}} @else{{asset('assets/img/logo.png')}} @endif" alt="Logo"> --}}
+							<strong>
+							WAY
+							</strong>
+						</a>
+					</center>
 
 					<!-- Page Header -->
 					<div class="page-header">
