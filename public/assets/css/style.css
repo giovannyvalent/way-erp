@@ -1990,6 +1990,14 @@ html.menu-opened body {
 .page-wrapper > .content {
 	padding: 1.875rem 1.875rem 0;
 }
+.page-wrapper-public {
+	padding-top: 60px;
+	position: relative;
+	transition: all 0.4s ease;
+}
+.page-wrapper-public > .content {
+	padding: 1.875rem 1.875rem 0;
+}
 .page-header {
 	margin-bottom: 1.875rem;
 }

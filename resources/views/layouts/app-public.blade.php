@@ -73,7 +73,7 @@
 		<![endif]-->
 
     </head>
-    <body style="font-family: 'Onest', sans-serif; font-weight: 400; font-size: 13px">
+    <body style="font-family: 'Onest', sans-serif; font-weight: 400; font-size: 17px">
 
 		<!-- Main Wrapper -->
         <div class="main-wrapper">
@@ -83,13 +83,13 @@
 			<!-- /Header -->
 
 			<!-- Sidebar -->
-            @include('includes.sidebar')
+            {{-- @include('includes.sidebar') --}}
 			<!-- /Sidebar -->
 
 			<!-- Page Wrapper -->
-            <div class="page-wrapper">
+            <div class="page-wrapper-public">
 
-                <div class="content container-fluid">
+                <div class="content col-lg-12">
 
 					<!-- Page Header -->
 					<div class="page-header">

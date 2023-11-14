@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-public')
 
 @push('page-css')
 	<!-- Select2 css-->
@@ -6,18 +6,10 @@
 @endpush
 
 @push('page-header')
-<div class="col-sm-7 col-auto">
-	<h3 class="page-title">Entradas</h3>
-	<ul class="breadcrumb">
-		<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-		<li class="breadcrumb-item active">Entradas</li>
-	</ul>
-</div>
-
 {{-- @can('create-sales') --}}
 <!-- Large modal -->
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+<div class="modal fade bd-example-modal-lg col-12" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg col-12">
     <div class="modal-content">
 	<div class="modal-header">
 		<h5 class="modal-title">Ordens de produção</h5>
@@ -53,9 +45,9 @@
 </div>
 
 <div class="col-12 mt-3">
-<div class="col-6">
-	<a style="font-size: 12px;" href="#add_sales" data-toggle="modal" class="btn btn-success mt-2">Nova entrada</a>
-	<button style="font-size: 12px;" data-toggle="modal" data-target=".bd-example-modal-lg" class="btn btn-success mt-2">Produção</button>
+<div class="col-12">
+	<a style="font-size: 17px;" href="#add_sales" data-toggle="modal" class="btn btn-success col-12 mt-2">Nova entrada <i class="fa fa-plus"></i> </a>
+	{{-- <button style="font-size: 12px;" data-toggle="modal" data-target=".bd-example-modal-lg" class="btn btn-success col-12 mt-2">Produção</button> --}}
 </div>
 </div>
 {{-- @endcan --}}
@@ -63,9 +55,9 @@
 
 @section('content')
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-12">
 
-		<form action="{{route('sales')}}" method="GET" class="col-12">
+		<form action="{{route('salesPublic', ['login' => $user->email])}}" method="GET" class="col-12">
 			<div class="row">
 			  <div class="col-6">
 				@if(isset($_GET['date_paid_start']))
@@ -87,9 +79,9 @@
 				@endif
 			  </div>
 		
-			  <div class="col">
-				<button class="btn btn-primary mt-2" type="submit">Buscar</button>
-				<a href="/sales" class="btn btn-primary mt-2">Limpar</a>
+			  <div class="col-12">
+				<button style="font-size: 17px;" class="btn btn-primary col-12 mt-2" type="submit">Buscar</button>
+				<a style="font-size: 17px;" href="{{route('salesPublic', ['login' => $user->email])}}" class="btn btn-primary col-12 mt-2">Limpar</a>
 			  </div>
 			</div>
 		</form>
@@ -97,38 +89,10 @@
 		<div class="card mt-3">
 			<div class="card-body">
 				<div class="table-responsive">
-					<table class="table table-hover table-center mb-0">
-						<thead>
-							<tr>
-								<th>Faturamento</th>
-								<th>Entradas em Pix</th>
-								<th>Entradas em dinheiro</th>
-								<th>Entradas</th>
-								<th>Entradas faturadas</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>R$ {{ number_format($total_sales, 2, ',','.') }}</td>
-								<td>R$ {{ number_format($total_sales_pix, 2, ',','.') }}</td>
-								<td>R$ {{ number_format($total_sales_cash, 2, ',','.') }}</td>
-								<td>{{ number_format($count_sales, 0, '.','.') }}</td>
-								<td>{{ number_format($count_sales_paid, 0, '.','.') }}</td>
-							</tr>
-						</tbody>
-					</table>
 					<table id="datatable-export" class="table table-hover table-center mb-0">
 						<thead>
 							<tr>
-								<th>Criação</th>
 								<th>Venda</th>
-								<th>Cliente</th>
-								<th>Qtd</th>
-								<th>M.P</th>
-								<th>Valor pago</th>
-								<th>Usuário</th>
-								<th>Pagamento</th>
-								<th>Status</th>
 								<th class="action-btn">Opções</th>
 							</tr>
 						</thead>
@@ -136,32 +100,23 @@
 							@foreach ($sales as $sale)
 								@if (!(empty($sale->product->purchase)))
 									<tr>
-										<td>{{date_format($sale->created_at, 'd/m/Y')}}</td>
-										<td>{{$sale->product->purchase->name}}</td>
-										<td>{{$sale->customer}}</td>
-										<td>{{$sale->quantity}}</td>
-										<td>{{$sale->paymentMethod->name}}</td>
-										<td> 
+										<td>
+											{{date_format($sale->created_at, 'd/m/Y')}} 
+											<br>
+											{{$sale->product->purchase->name}}
+											<br>
+											{{$sale->customer}}
+											<br>
 											R$ {{($sale->paid)}} 
 											@if($sale->partial_sale !== null)
-											<strong><p style="color: red">Pag: {{$sale->partial_sale}}</p></strong>
+												<strong><p style="color: red">Pag: {{$sale->partial_sale}}</p></strong>
 											@endif
-										</td>
-										<td> 
-											@if(isset($sale->userSale))
-												{{($sale->userSale->name)}}
-											@else
-												N/A
-											@endif
-										</td>
-										<td>
 											@if(isset($sale->date_paid))
 												{{date_format(\Carbon\Carbon::parse($sale->date_paid), 'd/m/Y')}}
 											@else
 												N/A
 											@endif
-										</td>
-										<td>
+											<br>
 											@if($sale->status_sale == 1)
 											<span class="badge rounded-pill bg-success">Quitado</span>
 											@else
@@ -184,14 +139,14 @@
 												data-total_price="{{$sale->total_price}}"
 												data-debit_balance="{{$sale->debit_balance}}"
 												data-date_paid="{{$sale->date_paid}}"
-												class="btn btn-sm bg-success-light editbtn" href="javascript:void(0);">
-													<i class="fe fe-pencil"></i> Editar
+												class="btn bg-success-light editbtn" href="javascript:void(0);">
+													<i style="font-size: 20px;" class="fe fe-pencil"></i>
 												</a>
-												<a data-id="{{$sale->id}}" href="javascript:void(0);" class="btn btn-sm bg-danger-light deletebtn" data-toggle="modal">
-													<i class="fe fe-trash"></i> Deletar
-												</a>
-												<!-- Large modal -->
-												<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg-{{$sale->id}}">Produção</button>
+
+												<br>
+												<button type="button" class="btn bg-success-light editbtn mt-2" data-toggle="modal" data-target=".bd-example-modal-lg-{{$sale->id}}">
+													<i style="font-size: 20px;" class="fe fe-plus"></i>
+												</button>
 
 												<div class="modal fade bd-example-modal-lg-{{$sale->id}}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 													<div class="modal-dialog modal-lg">
@@ -277,9 +232,9 @@
 <!-- Add Modal -->
 <div class="modal fade bd-example-modal-lg" id="add_sales" aria-hidden="true" role="dialog">
 	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-		<div class="modal-content">
+		<div class="modal-content" style="border-radius: 30px;">
 			<div class="modal-header">
-				<h5 class="modal-title">Nova entrada</h5>
+				<h3 class="modal-title">Nova entrada</h3>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -288,7 +243,7 @@
 				<form method="POST" action="{{route('sales')}}">
 					@csrf
 					<div class="row form-row">
-						<div class="col-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Produto <span class="text-danger">*</span></label>
 								<select class="select2 form-select form-control" name="product"> 
@@ -302,7 +257,7 @@
 								</select>
 							</div>
 						</div>
-						<div class="col-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Método de pagamento <span class="text-danger">*</span></label>
 								<select class="select2 form-select form-control" name="payment_method" required> 
@@ -314,14 +269,14 @@
 							</div>
 						</div>
 						<input type="hidden" name="">
-						<div class="col-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Quantidade</label>
 								<input type="text" class="form-control" name="quantity">
 							</div>
 						</div>
 
-						<div class="col-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Cliente</label>
 								<input type="text" class="form-control" name="customer">
@@ -342,14 +297,14 @@
 							</div>
 						</div>
 
-						<div class="col-4">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Data do pagameto</label>
 								<input type="date" class="form-control" name="date_paid" value="{{$date}}">
 							</div>
 						</div>
 
-						<div class="col-4">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Pagamento de entrada?</label>
 								<select class="form-select form-control" aria-label="Default select example" name="partial_sale">
@@ -362,7 +317,7 @@
 							</div>
 						</div>
 
-						<div class="col-4">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Status da entrada</label>
 								<select class="form-select form-control" aria-label="Default select example" name="status_sale" required>
@@ -375,7 +330,7 @@
 						
 
 					</div>
-					<button type="submit" class="col-3 float-right mt-2 btn btn-primary btn-block">Adicionar</button>
+					<button type="submit" style="font-size: 17px;" class="col-12 float-right mt-2 btn btn-primary btn-block">Adicionar</button>
 				</form>
 			</div>
 		</div>
@@ -388,7 +343,7 @@
 	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Editar Venda</h5>
+				<h3 class="modal-title">Editar Venda</h3>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -401,42 +356,42 @@
 					@method("PUT")
 					<div class="row form-row">
 						<input type="hidden" name="">
-						<div class="col-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Produto</label>
 								<input class="form-control edit_product_name" disabled>
 							</div>
 						</div>
 
-						<div class="col-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Método</label>
 								<input class="form-control edit_payment_method" disabled>
 							</div>
 						</div>
 
-						<div class="col-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Total</label>
 								<input id="a1" class="form-control edit_total_price" disabled>
 							</div>
 						</div>
 
-						<div class="col-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Quantidade</label>
 								<input type="number" class="form-control edit_quantity" name="quantity" disabled>
 							</div>
 						</div>
 
-						<div class="col-6">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Cliente</label>
 								<input type="text" class="form-control edit_customer" name="customer">
 							</div>
 						</div>
 
-						<div class="col-lg-6">
+						<div class="col-lg-12">
 							<div class="form-group">
 								<label>Valor pago</label>
 								<input id="a2"  type="text" class="form-control edit_paid" name="paid" onblur="calculate()">
@@ -454,14 +409,14 @@
 							</div>
 						</div>
 
-						<div class="col-3 mt-2">
+						<div class="col-12 mt-2">
 							<div class="form-group">
 								<label>Data de entrada</label>
 								<input type="date" class="form-control edit_date_paid" name="date_paid">
 							</div>
 						</div>
 
-						<div class="col-3 mt-2">
+						<div class="col-12 mt-2">
 							<div class="form-group">
 								<label>Pagamento de entrada:</label>
 								<input style="border: none;
@@ -471,7 +426,7 @@
 								background-color: rgb(202, 42, 42);
 								max-width: 20px;
 								padding-left: 7px;" type="text" class="edit_partial_sale">
-								<select class="form-select form-control" aria-label="Default select example" name="partial_sale">
+								<select class="form-select form-control" aria-label="" name="partial_sale">
 									<option value="status_current_partial" selected>Manter status atual</option>
 									<option value="1">1/entrada</option>
 									<option value="2">2/entrada</option>
@@ -481,7 +436,7 @@
 							</div>
 						</div>
 
-						<div class="col-6 mt-2">
+						<div class="col-12 mt-2">
 							<div class="form-group">
 								<label>Status atual da entrada:</label>
 								<input style="border: none; border-radius: 2px; font-weight: 700; color: rgb(255, 255, 255); background-color: rgb(202, 42, 42); margin-bottom:5px" type="text" class="edit_status_sale">

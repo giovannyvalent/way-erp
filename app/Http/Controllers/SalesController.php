@@ -26,8 +26,9 @@ class SalesController extends Controller
         $title = "sales";
         $products = Product::get();
         $payments = PaymentMethods::get();
-        $start_month = Carbon::now()->startOfMonth()->format('Y-m-d');
+        // $start_month = Carbon::now()->startOfMonth()->format('Y-m-d');
         $date = Carbon::now()->format('Y-m-d');
+        $start_month = Carbon::now()->format('Y-m-d');
 
         if(isset($_GET['date_paid_start'])){
             $sales = Sales::whereBetween('date_paid', [$_GET['date_paid_start'], $_GET['date_paid_end']])->with('product')->latest()->get();
@@ -50,6 +51,42 @@ class SalesController extends Controller
         ));
     }
 
+    public function salesPublic($login){
+        $user = User::where('email', $login)->get()->first();
+        $title = "sales";
+        $products = Product::get();
+        $payments = PaymentMethods::get();
+        // $start_month = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $date = Carbon::now()->format('Y-m-d');
+        $start_month = Carbon::now()->format('Y-m-d');
+
+        if(isset($_GET['date_paid_start'])){
+            $sales = Sales::whereBetween('date_paid', [$_GET['date_paid_start'], $_GET['date_paid_end']])
+            ->with('product')
+            ->where('user_id', $user->id)
+            ->latest()->get();
+        }else{
+            $sales = Sales::whereBetween('date_paid', [$start_month, $date])
+            ->with('product')
+            ->where('user_id', $user->id)
+            ->latest()->get();
+        }
+
+        $total_sales = $sales->where('status_sale', 1)->sum('paid');
+        $total_sales_pix = $sales->where('status_sale', 1)->where('payment_method', 1)->sum('paid');
+        $total_sales_cash = $sales->where('status_sale', 1)->where('payment_method', 2)->sum('paid');
+
+        $count_sales = $sales->count();
+        $count_sales_paid = $sales->where('status_sale', 1)->count();
+
+        $users = User::all();
+                
+        return view('sales-public',compact(
+            'title','products','sales', 'payments', 'date', 'total_sales',
+            'total_sales_pix', 'total_sales_cash', 'count_sales', 'count_sales_paid', 'users',
+            'start_month', 'user'
+        ));
+    }
     /**
      * Store a newly created resource in storage.
      *
