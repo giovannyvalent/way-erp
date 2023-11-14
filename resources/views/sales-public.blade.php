@@ -286,7 +286,7 @@
 						<div class="col-12">
 							<div class="form-group">
 								<label>Valor pago</label>
-								<input type="text" class="form-control" name="paid">
+								<input type="number" class="form-control" name="paid">
 							</div>
 						</div>
 
@@ -394,7 +394,7 @@
 						<div class="col-lg-12">
 							<div class="form-group">
 								<label>Valor pago</label>
-								<input id="a2"  type="text" class="form-control edit_paid" name="paid" onblur="calculate()">
+								<input id="a2"  type="number" class="form-control edit_paid" name="paid" onblur="calculate()">
 								<a class="btn btn-primary mt-2" style="color:white">Calcular</a>
 							</div>
 							<label style="color:red">Saldo devedor do cliente</label>
