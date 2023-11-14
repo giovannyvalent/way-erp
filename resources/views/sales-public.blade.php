@@ -57,7 +57,7 @@
 <div class="row">
 	<div class="col-12">
 
-		<form action="{{route('salesPublic', ['login' => $user->email])}}" method="GET" class="col-12">
+		<form action="{{route('salesPublic', ['login' => $usuario->email])}}" method="GET" class="col-12">
 			<div class="row">
 			  <div class="col-6">
 				@if(isset($_GET['date_paid_start']))
@@ -81,7 +81,7 @@
 		
 			  <div class="col-12">
 				<button style="font-size: 17px;" class="btn btn-primary col-12 mt-2" type="submit">Buscar</button>
-				<a style="font-size: 17px;" href="{{route('salesPublic', ['login' => $user->email])}}" class="btn btn-primary col-12 mt-2">Limpar</a>
+				<a style="font-size: 17px;" href="{{route('salesPublic', ['login' => $usuario->email])}}" class="btn btn-primary col-12 mt-2">Limpar</a>
 			  </div>
 			</div>
 		</form>
@@ -240,7 +240,8 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{route('sales')}}">
+				<form method="POST" action="{{route('storePublic')}}">
+					<input type="hidden" name="login" value="{{$usuario->email}}">
 					@csrf
 					<div class="row form-row">
 						<div class="col-12">
@@ -309,6 +310,7 @@
 								<label>Pagamento de entrada?</label>
 								<select class="form-select form-control" aria-label="Default select example" name="partial_sale">
 									<option selected>Selecione uma opção</option>
+									<option value="0" selected>total</option>
 									<option value="1">1/entrada</option>
 									<option value="2">2/entrada</option>
 									<option value="3">3/entrada</option>

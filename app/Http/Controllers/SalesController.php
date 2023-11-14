@@ -52,7 +52,7 @@ class SalesController extends Controller
     }
 
     public function salesPublic($login){
-        $user = User::where('email', $login)->get()->first();
+        $usuario = User::where('email', $login)->get()->first();
         $title = "sales";
         $products = Product::get();
         $payments = PaymentMethods::get();
@@ -63,12 +63,12 @@ class SalesController extends Controller
         if(isset($_GET['date_paid_start'])){
             $sales = Sales::whereBetween('date_paid', [$_GET['date_paid_start'], $_GET['date_paid_end']])
             ->with('product')
-            ->where('user_id', $user->id)
+            ->where('user_id', $usuario->id)
             ->latest()->get();
         }else{
             $sales = Sales::whereBetween('date_paid', [$start_month, $date])
             ->with('product')
-            ->where('user_id', $user->id)
+            ->where('user_id', $usuario->id)
             ->latest()->get();
         }
 
@@ -84,7 +84,7 @@ class SalesController extends Controller
         return view('sales-public',compact(
             'title','products','sales', 'payments', 'date', 'total_sales',
             'total_sales_pix', 'total_sales_cash', 'count_sales', 'count_sales_paid', 'users',
-            'start_month', 'user'
+            'start_month', 'usuario'
         ));
     }
     /**
@@ -159,6 +159,77 @@ class SalesController extends Controller
             );
             
         }
+        return back()->with($notification);
+    }
+
+    public function storePublic(Request $request)
+    {
+        $this->validate($request,[
+            'product'=>'required',
+            'quantity'=>'required|min:1'
+        ]);
+        $sold_product = Product::find($request->product);
+        $user = User::where('email', $request->login)->get()->first();
+        
+        /**update quantity of
+            sold item from
+         purchases
+        **/
+        $quantity_formated = preg_replace('/[,]/', '.', $request->quantity); 
+
+        $purchased_item = Purchase::find($sold_product->purchase->id);
+        $new_quantity = ($purchased_item->quantity) - ($quantity_formated);
+        $notification = '';
+        if (!($new_quantity < 0)){
+
+            $purchased_item->update([
+                'quantity'=>$new_quantity,
+            ]);
+
+            /**
+             * calcualting item's total price
+            **/
+            $total_price = ($quantity_formated) * ($sold_product->price);
+            $price_formated = preg_replace('/[,]/', '.', $total_price); 
+            $paid_formated = preg_replace('/[,]/', '.', $request->paid); 
+            $sale = Sales::create([
+                'product_id'=>$request->product,
+                'quantity'=>$quantity_formated,
+                'total_price'=>$total_price,
+                'customer'=>$request->customer,
+                'payment_method'=>$request->payment_method,
+                'paid'=>$paid_formated,
+                'description'=>$request->description,
+                'status_sale'=>$request->status_sale,
+                'date_paid'=>$request->date_paid,
+                'user_id'=>$user->id,
+                'partial_sale'=>isset($request->partial_sale) ? $request->partial_sale : null
+            ]);
+
+            OrderProductions::create([
+                'user_id' => null,
+                'sale_id' => $sale->id,
+                'status' => null
+            ]);
+
+            $notification = array(
+                'message'=>"Entrada cadastrada",
+                'alert-type'=>'success',
+            );
+        } 
+        if($new_quantity <=1 && $new_quantity !=0){
+            // send notification 
+            // $product = Purchase::where('quantity', '<=', 1)->first(); // legacy rules
+            $product = Purchase::where('id', $purchased_item->id)->first(); // new rules
+            event(new PurchaseOutStock($product));
+            // end of notification 
+            $notification = array(
+                'message'=>"Produto insuficiente no estoque!!",
+                'alert-type'=>'danger'
+            );
+            
+        }
+        
         return back()->with($notification);
     }
 
