@@ -325,6 +325,74 @@ class SalesController extends Controller
         return back()->with($notification);
     }
 
+    public function updatePublic(Request $request)
+    {
+        $sale = Sales::find($request->id);
+        $sold_product = Product::find($sale->product_id);
+        
+        $purchased_item = Purchase::find($sold_product->purchase->id);
+        $new_quantity = $purchased_item->quantity;
+        if ($new_quantity > 0){
+
+            if($request->status_sale == 'status_current'){
+                $status_sale = $sale->status_sale;
+            }else{
+                $status_sale = $request->status_sale;
+            }
+            
+            $partial_sale_current = $sale->partial_sale;
+            $total_price = ($request->quantity) * ($sold_product->price);
+            $paid_formated = preg_replace('/[,]/', '.', $request->paid); 
+
+            $sale->update([
+                'product_id'=>$request->product,
+                // 'quantity'=>$new_quantity,
+                // 'quantity'=>$request->quantity,
+                // 'total_price'=>$total_price,
+                'customer'=>$request->customer,
+                'paid'=>$paid_formated,
+                'description'=>$request->description,
+                'debit_balance'=>$request->debit_balance,
+                'date_paid'=>$request->date_paid,
+                'status_sale'=>$status_sale,
+                'partial_sale'=> isset($request->partial_sale) 
+                && $request->partial_sale !== 'status_current_partial'  
+                ? $request->partial_sale : $partial_sale_current
+
+            ]);
+
+            $notification = array(
+                'message'=>"Venda realizada",
+                'alert-type'=>'success',
+            );
+        }
+        
+        elseif($new_quantity <=3 && $new_quantity !=0){
+            // send notification 
+            $product = Purchase::where('quantity', '<=', 3)->first();
+            event(new PurchaseOutStock($product));
+            // end of notification 
+            $notification = array(
+                'message'=>"Produto insuficiente no estoque!",
+                'alert-type'=>'danger'
+            );
+            
+        }
+        else{
+            $notification = array(
+                'message'=>"Verifique a quantidade de produtos para compra",
+                'alert-type'=>'info',
+            );
+            return back()->with($notification);
+        }
+
+        $notification = array(
+            'message'=> "Ok",
+            'alert-type'=> 'info',
+        );
+        return back()->with($notification);
+    }
+
     public function orderUpdate(Request $request){
         $order = OrderProductions::where('sale_id', $request->sale_id)->get()->first();
         if(empty($order)){

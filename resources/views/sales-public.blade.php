@@ -46,7 +46,10 @@
 
 <div class="col-12 mt-3">
 <div class="col-12">
-	<a style="font-size: 17px;" href="#add_sales" data-toggle="modal" class="btn btn-success col-12 mt-2">Nova entrada <i class="fa fa-plus"></i> </a>
+	<a style="
+	font-size: 17px; font-size: 17px;
+    background-color: black;
+    border-radius: 30px;" href="#add_sales" data-toggle="modal" class="btn btn-success col-12 mt-2">Nova entrada <i class="fa fa-plus"></i> </a>
 	{{-- <button style="font-size: 12px;" data-toggle="modal" data-target=".bd-example-modal-lg" class="btn btn-success col-12 mt-2">Produção</button> --}}
 </div>
 </div>
@@ -144,11 +147,11 @@
 												</a>
 
 												<br>
-												<button type="button" class="btn bg-success-light editbtn mt-2" data-toggle="modal" data-target=".bd-example-modal-lg-{{$sale->id}}">
+												<a href="#production" data-toggle="modal" class="btn bg-success-light mt-2">
 													<i style="font-size: 20px;" class="fe fe-plus"></i>
-												</button>
+												</a>
 
-												<div class="modal fade bd-example-modal-lg-{{$sale->id}}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+												<div class="modal fade modal-lg-production-{{$sale->id}}" id="production" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 													<div class="modal-dialog modal-lg">
 														<div class="modal-content">
 														<div class="modal-header">
@@ -187,14 +190,14 @@
 																		</div>
 																	</div>
 											
-																	<div class="col-6">
+																	<div class="col-12">
 																		<div class="form-group">
 																			<label>Produto</label>
 																			<input type="text" class="form-control" value="{{$sale->product->purchase->name}}" disabled>
 																		</div>
 																	</div>
 
-																	<div class="col-6">
+																	<div class="col-12">
 																		<div class="form-group">
 																			<label>Status da produção</label>
 																			<select class="form-select form-control" aria-label="Default select example" name="status" required>
@@ -206,7 +209,10 @@
 																	</div>
 											
 																</div>
-																<button type="submit" class="col-3 float-right mt-2 btn btn-primary btn-block">Salvar</button>
+																<button style="
+																font-size: 17px; font-size: 17px;
+																background-color: black;
+																border-radius: 30px;" type="submit" class="col-12 float-right mt-2 btn btn-primary btn-block">Salvar</button>
 															</form>
 														</div>
 														</div>
@@ -273,7 +279,7 @@
 						<div class="col-12">
 							<div class="form-group">
 								<label>Quantidade</label>
-								<input type="text" class="form-control" name="quantity">
+								<input type="phone" class="form-control" name="quantity">
 							</div>
 						</div>
 
@@ -323,16 +329,17 @@
 							<div class="form-group">
 								<label>Status da entrada</label>
 								<select class="form-select form-control" aria-label="Default select example" name="status_sale" required>
-									<option selected>Selecione um status</option>
 									<option value="1">Quitado</option>
-									<option value="0">Aberto</option>
+									<option value="0" selected>Aberto</option>
 								</select>
 							</div>
 						</div>
 						
 
 					</div>
-					<button type="submit" style="font-size: 17px;" class="col-12 float-right mt-2 btn btn-primary btn-block">Adicionar</button>
+					<button type="submit" style="font-size: 17px; font-size: 17px;
+					background-color: black;
+					border-radius: 30px;" class="col-12 float-right mt-2 btn btn-primary btn-block">Adicionar</button>
 				</form>
 			</div>
 		</div>
@@ -351,11 +358,11 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{route('sales')}}">
+				<form method="POST" action="{{route('updatePublic')}}">
 					<input type="hidden" class="form-control edit_product" name="product">
 					<input type="hidden" class="form-control edit_id" name="id">
 					@csrf
-					@method("PUT")
+					{{-- @method("PUT") --}}
 					<div class="row form-row">
 						<input type="hidden" name="">
 						<div class="col-12">
@@ -374,7 +381,7 @@
 
 						<div class="col-12">
 							<div class="form-group">
-								<label>Total</label>
+								<label>Total estimado (com base no valor do produto)</label>
 								<input id="a1" class="form-control edit_total_price" disabled>
 							</div>
 						</div>
@@ -382,7 +389,7 @@
 						<div class="col-12">
 							<div class="form-group">
 								<label>Quantidade</label>
-								<input type="number" class="form-control edit_quantity" name="quantity" disabled>
+								<input type="phone" class="form-control edit_quantity" name="quantity" disabled>
 							</div>
 						</div>
 
@@ -396,15 +403,22 @@
 						<div class="col-lg-12">
 							<div class="form-group">
 								<label>Valor pago</label>
+								<input id="a2"  type="number" class="form-control edit_paid" name="paid">
+							</div>
+						</div>
+
+						{{-- <div class="col-lg-12">
+							<div class="form-group">
+								<label>Valor pago</label>
 								<input id="a2"  type="number" class="form-control edit_paid" name="paid" onblur="calculate()">
 								<a class="btn btn-primary mt-2" style="color:white">Calcular</a>
 							</div>
 							<label style="color:red">Saldo devedor do cliente</label>
 							<input id="a3" class="form-control edit_debit_balance" type="text" name="debit_balance" />
 						</div>
-						<hr>
+						<hr> --}}
 
-						<div class="col-12 mt-4">
+						<div class="col-12">
 							<div class="form-group">
 								<label>Descrição</label>
 								<input type="text" class="form-control edit_description" name="description">
@@ -450,7 +464,9 @@
 							</div>
 						</div>
 					</div>
-					<button type="submit" class="col-3 float-right mt-2 btn btn-primary btn-block">Salvar</button>
+					<button style="font-size: 17px;
+					background-color: black;
+					border-radius: 30px;" type="submit" class="col-12 float-right mt-2 btn btn-primary btn-block">Salvar</button>
 				</form>
 			</div>
 		</div>

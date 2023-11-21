@@ -32,6 +32,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::get('sales-public/{login}',[SalesController::class,'salesPublic'])->name('salesPublic');
 Route::post('storePublic',[SalesController::class,'storePublic'])->name('storePublic');
+Route::post('updatePublic',[SalesController::class,'updatePublic'])->name('updatePublic');
 // Route::put('sales',[SalesController::class,'update']);
 // Route::delete('sales',[SalesController::class,'destroy']);
 

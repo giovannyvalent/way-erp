@@ -144,7 +144,11 @@
 										<td> 
 											R$ {{($sale->paid)}} 
 											@if($sale->partial_sale !== null)
-											<strong><p style="color: red">Pag: {{$sale->partial_sale}}</p></strong>
+											@if($sale->partial_sale == 0)
+												<strong><p style="color: rgb(81, 178, 97)">Valor total</p></strong>
+											@else
+												<strong><p style="color: red">Parcela: {{$sale->partial_sale}}</p></strong>
+											@endif
 											@endif
 										</td>
 										<td> 
@@ -353,11 +357,11 @@
 							<div class="form-group">
 								<label>Pagamento de entrada?</label>
 								<select class="form-select form-control" aria-label="Default select example" name="partial_sale">
-									<option selected>Selecione uma opção</option>
-									<option value="1">1/entrada</option>
-									<option value="2">2/entrada</option>
-									<option value="3">3/entrada</option>
-									<option value="4">4/entrada</option>
+									<option value="0" selected>total</option>
+									<option value="1">1ª parcela</option>
+									<option value="2">2ª parcela</option>
+									<option value="3">3ª parcela</option>
+									<option value="4">4ª parcela</option>
 								</select>
 							</div>
 						</div>
@@ -366,9 +370,8 @@
 							<div class="form-group">
 								<label>Status da entrada</label>
 								<select class="form-select form-control" aria-label="Default select example" name="status_sale" required>
-									<option selected>Selecione um status</option>
 									<option value="1">Quitado</option>
-									<option value="0">Aberto</option>
+									<option value="0" selected>Aberto</option>
 								</select>
 							</div>
 						</div>
@@ -473,10 +476,11 @@
 								padding-left: 7px;" type="text" class="edit_partial_sale">
 								<select class="form-select form-control" aria-label="Default select example" name="partial_sale">
 									<option value="status_current_partial" selected>Manter status atual</option>
-									<option value="1">1/entrada</option>
-									<option value="2">2/entrada</option>
-									<option value="3">3/entrada</option>
-									<option value="4">4/entrada</option>
+									<option value="0">total</option>
+									<option value="1">1ª parcela</option>
+									<option value="2">2ª parcela</option>
+									<option value="3">3ª parcela</option>
+									<option value="4">4ª parcela</option>
 								</select>
 							</div>
 						</div>
