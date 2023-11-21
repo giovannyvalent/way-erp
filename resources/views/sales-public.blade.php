@@ -147,9 +147,9 @@
 												</a>
 
 												<br>
-												<a href="#production" data-toggle="modal" class="btn bg-success-light mt-2">
+												{{-- <a href="#production" data-toggle="modal" class="btn bg-success-light mt-2">
 													<i style="font-size: 20px;" class="fe fe-plus"></i>
-												</a>
+												</a> --}}
 
 												<div class="modal fade modal-lg-production-{{$sale->id}}" id="production" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 													<div class="modal-dialog modal-lg">
@@ -440,8 +440,8 @@
 								font-weight: initial;
 								color: rgb(255, 255, 255);
 								background-color: rgb(202, 42, 42);
-								max-width: 20px;
-								padding-left: 7px;" type="text" class="edit_partial_sale">
+								max-width: 50px;
+								padding-left: 20px;" type="text" class="edit_partial_sale">
 								<select class="form-select form-control" aria-label="" name="partial_sale">
 									<option value="status_current_partial" selected>Manter status atual</option>
 									<option value="1">1/entrada</option>
