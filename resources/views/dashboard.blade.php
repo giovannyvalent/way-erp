@@ -5,6 +5,8 @@
 
 @push('page-header')
 <div class="col-sm-12">
+	<img src="https://wayfactory.com.br/wp-content/uploads/2023/10/waylogo.jpg" style="max-width: 150px; border-radius:20px;" alt="">
+	<hr>
 	<h3 class="page-title">Bem-vindo(a), {{auth()->user()->name}}!</h3>
 	<ul class="breadcrumb">
 		<li class="breadcrumb-item active">Dashboard</li>
@@ -13,7 +15,6 @@
 @endpush
 
 @section('content')
-	
 	<div class="row">
 		<div class="col-xl-3 col-sm-6 col-12">
 			<div class="card">

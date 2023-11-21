@@ -94,9 +94,9 @@
 					<center>
 						<a class="logo" style="font-size: 30px">
 							{{-- <img src="@if(!empty(AppSettings::get('logo'))) {{asset('storage/'.AppSettings::get('logo'))}} @else{{asset('assets/img/logo.png')}} @endif" alt="Logo"> --}}
-							<strong>
-							WAY
-							</strong>
+							<img src="https://wayfactory.com.br/wp-content/uploads/2023/10/waylogo.jpg" 
+								style="max-width: 150px; border-radius:20px;"
+								alt="">
 						</a>
 					</center>
 
