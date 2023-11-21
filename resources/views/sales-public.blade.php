@@ -112,7 +112,11 @@
 											<br>
 											R$ {{($sale->paid)}} 
 											@if($sale->partial_sale !== null)
-												<strong><p style="color: red">Pag: {{$sale->partial_sale}}</p></strong>
+											@if($sale->partial_sale == 0)
+												<strong><p style="color: rgb(81, 178, 97)">Valor total</p></strong>
+											@else
+												<strong><p style="color: red">Parcela: {{$sale->partial_sale}}</p></strong>
+											@endif
 											@endif
 											@if(isset($sale->date_paid))
 												{{date_format(\Carbon\Carbon::parse($sale->date_paid), 'd/m/Y')}}
@@ -168,7 +172,7 @@
 															<p>Quantidade: {{$sale->quantity}}</p>
 															<p>Status:
 																@if(isset($sale->order($sale->id)->status) && $sale->order($sale->id)->status)
-																<strong style="color: rgb(230, 15, 15);">{{$sale->order($sale->id)->status}}</strong>
+																	<strong style="color: rgb(230, 15, 15);">{{$sale->order($sale->id)->status}}</strong>
 																@endif
 															</p>
 														</div>
